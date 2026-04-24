@@ -9,10 +9,20 @@
 <meta property="og:description" content="Tu dinero está en algún lado. ¿Sabes dónde?" />
 <title>Planilla Inteligente · Tu dinero, visible.</title>
 
+<!-- Performance: preconnect critical external domains -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,14..144,400;1,14..144,500;1,14..144,600&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
+<link rel="dns-prefetch" href="https://i.pravatar.cc" />
 
+<!-- Preload critical resources -->
+<link rel="preload" as="image" href="f70cb841-0f64-40b3-91cc-c0418415db03.png" fetchpriority="high" />
+<link rel="preload" as="script" href="https://cdn.tailwindcss.com" crossorigin />
+
+<!-- Optimized fonts: only weights actually used, with swap for faster paint -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,14..144,400;1,14..144,500&display=swap" rel="stylesheet" />
+
+<!-- Tailwind CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -153,6 +163,15 @@
   @media (min-width: 768px) {
     .purchase-toast { bottom: 24px; left: 24px; }
   }
+
+  /* Performance: skip rendering off-screen sections until near viewport */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 800px;
+  }
+
+  /* Prevent image layout shift — reserve aspect ratio */
+  img { height: auto; }
 </style>
 </head>
 
@@ -162,9 +181,9 @@
   TOP ANNOUNCEMENT
 ========================================================= -->
 <div class="bg-ink text-white text-center text-[13px] py-2.5 px-4">
-  <span class="inline-flex items-center gap-2">
+  <span class="inline-flex items-center gap-2 flex-wrap justify-center">
     <span class="w-1.5 h-1.5 rounded-full bg-green animate-dot"></span>
-    <span><strong class="text-green">Solo hoy · <span class="js-today-date">23 de abril</span></strong> · US$ 47 por US$ 19,90 · Cierra en <strong id="topTimer">—</strong></span>
+    <span><strong class="text-green">Oferta de lanzamiento</strong> · Solo hoy <span class="js-today-date">23 de abril</span> · Cierra en <strong id="topTimer" class="tabular-nums">—</strong></span>
   </span>
 </div>
 
@@ -220,6 +239,9 @@
         class="w-full"
         loading="eager"
         decoding="async"
+        fetchpriority="high"
+        width="760"
+        height="470"
       />
     </div>
 
@@ -267,6 +289,8 @@
           class="w-full block"
           loading="lazy"
           decoding="async"
+          width="760"
+          height="760"
         />
       </div>
     </div>
@@ -289,6 +313,8 @@
         class="w-full block"
         loading="lazy"
         decoding="async"
+        width="680"
+        height="680"
       />
       <div class="absolute inset-0 pointer-events-none" style="box-shadow: inset 0 60px 35px -20px #0A0A0A, inset 0 -30px 25px -15px #0A0A0A, inset 50px 0 35px -20px #0A0A0A, inset -50px 0 35px -20px #0A0A0A;"></div>
     </div>
@@ -367,13 +393,15 @@
     <div class="mt-12 mb-12 flex justify-center">
       <div class="relative max-w-[280px] w-full rounded-2xl overflow-hidden ring-2 ring-green/40 shadow-[0_20px_60px_-20px_rgba(16,185,129,0.5)]">
         <video
-          src="Design%20sem%20nome%20%282%29.mp4"
-          autoplay
+          id="helenaVideo"
+          data-src="Design%20sem%20nome%20%282%29.mp4"
           loop
           muted
           playsinline
-          preload="auto"
-          class="w-full block"
+          preload="none"
+          width="280"
+          height="498"
+          class="w-full block bg-ink2"
           aria-label="Helena grabando un audio para registrar un gasto">
         </video>
         <div class="absolute top-3 left-3 bg-green text-ink text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
@@ -421,9 +449,9 @@
 
     <!-- 3 phones showcasing full dashboard -->
     <div class="flex justify-center items-end gap-1 sm:gap-3 max-w-[1100px] mx-auto">
-      <img src="ddf7f1bc-ad83-4569-a25c-0648b2b0fce9.png" alt="Saldo total y carta del domingo" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async"/>
-      <img src="da444664-8d6e-4c2d-8198-4f3b315ff292.png" alt="Tarjetas y próximas cuentas" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async"/>
-      <img src="f9af2857-0fab-49f0-bf3e-5dd7735dd3c6.png" alt="Gráfico circular de gastos y movimientos" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async"/>
+      <img src="ddf7f1bc-ad83-4569-a25c-0648b2b0fce9.png" alt="Saldo total y carta del domingo" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
+      <img src="da444664-8d6e-4c2d-8198-4f3b315ff292.png" alt="Tarjetas y próximas cuentas" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
+      <img src="f9af2857-0fab-49f0-bf3e-5dd7735dd3c6.png" alt="Gráfico circular de gastos y movimientos" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
     </div>
 
     <!-- Features list · premium cards -->
@@ -575,8 +603,8 @@
 
     <!-- 2 phones side by side -->
     <div class="flex justify-center items-end gap-2 sm:gap-6 max-w-[1000px] mx-auto">
-      <img src="dafd3ff1-98fa-4caa-bd77-0538b371b8af.png" alt="Vista mensual del calendario con vencimientos" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async"/>
-      <img src="a73a45f7-1e33-48f0-876b-21d414f6f22a.png" alt="Detalle del día con aviso de pago próximo" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async"/>
+      <img src="dafd3ff1-98fa-4caa-bd77-0538b371b8af.png" alt="Vista mensual del calendario con vencimientos" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async" width="520" height="1068"/>
+      <img src="a73a45f7-1e33-48f0-876b-21d414f6f22a.png" alt="Detalle del día con aviso de pago próximo" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async" width="520" height="1068"/>
     </div>
 
     <!-- Features list · premium cards -->
@@ -728,8 +756,8 @@
 
     <!-- iPad + Macbook side by side -->
     <div class="flex justify-center items-end gap-2 sm:gap-8 max-w-[1280px] mx-auto">
-      <img src="5f90412b-d3cc-4ae7-9ae8-fa35bbf51c43.png" alt="Planilla Inteligente en iPad" class="w-[40%] max-w-[520px]" loading="lazy" decoding="async"/>
-      <img src="2efef129-c44a-46a7-b45f-8193b02895ef.png" alt="Planilla Inteligente en MacBook" class="w-[60%] max-w-[780px]" loading="lazy" decoding="async"/>
+      <img src="5f90412b-d3cc-4ae7-9ae8-fa35bbf51c43.png" alt="Planilla Inteligente en iPad" class="w-[40%] max-w-[520px]" loading="lazy" decoding="async" width="520" height="720"/>
+      <img src="2efef129-c44a-46a7-b45f-8193b02895ef.png" alt="Planilla Inteligente en MacBook" class="w-[60%] max-w-[780px]" loading="lazy" decoding="async" width="780" height="480"/>
     </div>
 
     <!-- Benefits row -->
@@ -753,7 +781,7 @@
 <!-- =========================================================
   METHOD · 3 steps (upgraded)
 ========================================================= -->
-<section id="metodo" class="bg-surface border-b border-line relative overflow-hidden">
+<section id="metodo" class="cv-auto bg-surface border-b border-line relative overflow-hidden">
   <!-- Decorative gradient -->
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-green/5 blur-3xl pointer-events-none"></div>
 
@@ -852,7 +880,7 @@
 <!-- =========================================================
   HELENA · bio with portrait
 ========================================================= -->
-<section id="reveal" class="border-b border-line">
+<section id="reveal" class="cv-auto border-b border-line">
   <div class="max-w-[1100px] mx-auto px-5 sm:px-8 py-20 sm:py-32">
 
     <div class="grid lg:grid-cols-[380px_1fr] gap-10 lg:gap-16 items-start">
@@ -867,6 +895,8 @@
               class="w-full h-full object-cover"
               loading="lazy"
               decoding="async"
+              width="380"
+              height="380"
             />
           </div>
           <!-- Floating badge -->
@@ -919,7 +949,7 @@
     <div class="mt-20 sm:mt-24 bg-ink text-white rounded-3xl p-6 sm:p-10 grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-12 items-center relative overflow-hidden">
       <!-- Conference image -->
       <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-        <img src="893d137c-4202-47f3-bdd7-4eff8cf4e86c.png" alt="Helena presentando la Plantilla de Control Financiero en conferencia ante más de 400 personas" class="w-full block" loading="lazy" decoding="async"/>
+        <img src="893d137c-4202-47f3-bdd7-4eff8cf4e86c.png" alt="Helena presentando la Plantilla de Control Financiero en conferencia ante más de 400 personas" class="w-full block" loading="lazy" decoding="async" width="1200" height="675"/>
         <!-- Live badge -->
         <div class="absolute top-3 left-3 bg-red text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-white animate-dot"></span>
@@ -955,7 +985,7 @@
 <!-- =========================================================
   TESTIMONIALS · visual cards with avatars
 ========================================================= -->
-<section class="bg-surface border-b border-line">
+<section class="cv-auto bg-surface border-b border-line">
   <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-24 sm:py-32">
     <div class="text-center mb-16 sm:mb-20">
       <span class="t-kick text-green">historias reales</span>
@@ -979,7 +1009,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="https://i.pravatar.cc/120?img=47" alt="Carolina Muñoz" class="w-full h-full object-cover" loading="lazy"/>
+              <img src="https://i.pravatar.cc/120?img=47" alt="Carolina Muñoz" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Carolina Muñoz</div>
@@ -1005,7 +1035,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="download%20%282%29.jpg" alt="Rafael Alarcón" class="w-full h-full object-cover" loading="lazy"/>
+              <img src="download%20%282%29.jpg" alt="Rafael Alarcón" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Rafael Alarcón</div>
@@ -1031,7 +1061,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="download%20%2826%29.jpg" alt="Julia Palacios" class="w-full h-full object-cover" loading="lazy"/>
+              <img src="download%20%2826%29.jpg" alt="Julia Palacios" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Julia Palacios</div>
@@ -1057,7 +1087,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="Comente%20CASAL%20para%20receber%20os%20Prompts%20%F0%9F%8E%81.jpg" alt="Lucía y Santiago — pareja" class="w-full h-full object-cover" loading="lazy"/>
+              <img src="Comente%20CASAL%20para%20receber%20os%20Prompts%20%F0%9F%8E%81.jpg" alt="Lucía y Santiago — pareja" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Lucía y Santiago</div>
@@ -1083,7 +1113,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="https://i.pravatar.cc/120?img=11" alt="Marcos Villalba" class="w-full h-full object-cover" loading="lazy"/>
+              <img src="https://i.pravatar.cc/120?img=11" alt="Marcos Villalba" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Marcos Villalba</div>
@@ -1112,7 +1142,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="https://i.pravatar.cc/120?img=68" alt="Juan Vargas" class="w-full h-full object-cover" loading="lazy"/>
+              <img src="https://i.pravatar.cc/120?img=68" alt="Juan Vargas" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Juan Vargas</div>
@@ -1158,7 +1188,7 @@
 <!-- =========================================================
   PRICING · redesigned
 ========================================================= -->
-<section id="precio" class="border-b border-line bg-surface relative overflow-hidden">
+<section id="precio" class="cv-auto border-b border-line bg-surface relative overflow-hidden">
   <!-- Decorative elements -->
   <div class="absolute top-20 right-10 w-96 h-96 rounded-full bg-green/5 blur-3xl pointer-events-none"></div>
   <div class="absolute bottom-20 left-10 w-80 h-80 rounded-full bg-green/5 blur-3xl pointer-events-none"></div>
@@ -1445,7 +1475,7 @@
 <!-- =========================================================
   FAQ · redesigned with cards
 ========================================================= -->
-<section id="dudas" class="border-b border-line bg-surface">
+<section id="dudas" class="cv-auto border-b border-line bg-surface">
   <div class="max-w-[900px] mx-auto px-5 sm:px-8 py-24 sm:py-32">
     <div class="text-center mb-14 sm:mb-16">
       <span class="t-kick text-green">antes de decidir</span>
@@ -1665,7 +1695,7 @@
 <!-- =========================================================
   FOOTER
 ========================================================= -->
-<footer class="bg-white">
+<footer class="cv-auto bg-white">
   <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-10 grid sm:grid-cols-3 gap-8 items-start">
     <div>
       <div class="display text-[18px] tracking-[-0.04em] font-extrabold">Planilla Inteligente.</div>
@@ -1730,8 +1760,35 @@
 </div>
 
 <script>
-  // Purchase notifications — social proof live feed
+  // Lazy-load video when near viewport — saves 2-3MB on initial load
   (function(){
+    const vid = document.getElementById('helenaVideo');
+    if(!vid || !('IntersectionObserver' in window)) {
+      if(vid){ vid.src = vid.dataset.src; vid.setAttribute('autoplay',''); }
+      return;
+    }
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(e => {
+        if(e.isIntersecting){
+          vid.src = vid.dataset.src;
+          vid.load();
+          const p = vid.play();
+          if(p && p.catch) p.catch(() => {});
+          obs.unobserve(vid);
+        }
+      });
+    }, { rootMargin: '200px 0px' });
+    io.observe(vid);
+  })();
+
+  // Defer heavy work until after page is interactive
+  const deferWork = (fn) => {
+    if('requestIdleCallback' in window) requestIdleCallback(fn, { timeout: 3000 });
+    else setTimeout(fn, 1500);
+  };
+
+  // Purchase notifications — social proof live feed (deferred)
+  deferWork(function(){
     const toast = document.getElementById('purchaseToast');
     if(!toast) return;
 
@@ -1788,7 +1845,7 @@
       }
       scheduleNext();
     }, 8000);
-  })();
+  });
 
   // Dynamic date in Spanish — updates automatically every day
   (function(){
