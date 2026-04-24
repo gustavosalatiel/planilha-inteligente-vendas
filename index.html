@@ -12,8 +12,21 @@ gtag('set','ads_data_redaction',true);
 gtag('set','url_passthrough',true);
 </script>
 
-<!-- Cookiebot CMP — banner en español para UE + LATAM. Reemplazar data-cbid tras crear la cuenta. -->
-<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="8e246654-8eed-4b29-b1c7-2ba59d8fc284" data-blockingmode="auto" data-culture="ES" type="text/javascript" async></script>
+<!-- Cookiebot CMP — inyección diferida tras window.load para no competir con el LCP.
+     Seguro porque: (1) Consent default ya está denied arriba; (2) GTM es interaction-gated
+     (no dispara nada antes de que el banner aparezca). -->
+<script>
+addEventListener('load',function(){setTimeout(function(){
+  var s=document.createElement('script');
+  s.id='Cookiebot';
+  s.src='https://consent.cookiebot.com/uc.js';
+  s.async=true;
+  s.setAttribute('data-cbid','8e246654-8eed-4b29-b1c7-2ba59d8fc284');
+  s.setAttribute('data-blockingmode','auto');
+  s.setAttribute('data-culture','ES');
+  document.head.appendChild(s);
+},500)});
+</script>
 
 <meta name="description" content="Una planilla inteligente que te dice a dónde se va tu dinero. En 7 días." />
 <meta name="theme-color" content="#0A0A0A" />

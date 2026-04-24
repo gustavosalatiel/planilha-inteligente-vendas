@@ -2,19 +2,39 @@
   "exportFormatVersion": 2,
   "exportTime": "2026-04-23 12:00:00",
   "containerVersion": {
-    "path": "accounts/0/containers/0/versions/0",
-    "accountId": "0",
-    "containerId": "0",
+    "path": "accounts/6347565564/containers/250402705/versions/0",
+    "accountId": "6347565564",
+    "containerId": "250402705",
     "containerVersionId": "0",
     "name": "Planilla Inteligente — Server v1",
     "container": {
       "name": "helenarodriguez.site — SS",
       "publicId": "GTM-K26K3JCS",
-      "usageContext": ["SERVER"]
+      "usageContext": [
+        "SERVER"
+      ]
     },
     "client": [
-      { "clientId": "1", "name": "GA4", "type": "gtm_ga4", "parameter": [{ "type": "BOOLEAN", "key": "enableGA4", "value": "true" }], "priority": 100 },
-      { "clientId": "2", "name": "GTM Web", "type": "gtm_cloud", "parameter": [], "priority": 90 }
+      {
+        "clientId": "1",
+        "name": "GA4",
+        "type": "gtm_ga4",
+        "parameter": [
+          {
+            "type": "BOOLEAN",
+            "key": "enableGA4",
+            "value": "true"
+          }
+        ],
+        "priority": 100
+      },
+      {
+        "clientId": "2",
+        "name": "GTM Web",
+        "type": "gtm_cloud",
+        "parameter": [],
+        "priority": 90
+      }
     ],
     "tag": [
       {
@@ -22,91 +42,505 @@
         "name": "GA4 — Forward",
         "type": "ga4",
         "parameter": [
-          { "type": "TEMPLATE", "key": "measurementId", "value": "{{GA4_MEASUREMENT_ID}}" },
-          { "type": "TEMPLATE", "key": "apiSecret", "value": "{{GA4_API_SECRET}}" }
+          {
+            "type": "TEMPLATE",
+            "key": "measurementId",
+            "value": "{{GA4_MEASUREMENT_ID}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "apiSecret",
+            "value": "{{GA4_API_SECRET}}"
+          }
         ],
-        "firingTriggerId": ["2147479601"]
+        "firingTriggerId": [
+          "2147479601"
+        ]
       },
       {
         "tagId": "11",
         "name": "Meta CAPI — Purchase",
         "type": "cvt_fb_capi_stape",
         "parameter": [
-          { "type": "TEMPLATE", "key": "pixelId", "value": "{{FB_PIXEL_ID}}" },
-          { "type": "TEMPLATE", "key": "accessToken", "value": "{{FB_ACCESS_TOKEN}}" },
-          { "type": "TEMPLATE", "key": "testEventCode", "value": "{{FB_TEST_CODE}}" },
-          { "type": "TEMPLATE", "key": "eventName", "value": "Purchase" },
-          { "type": "TEMPLATE", "key": "eventId", "value": "{{Event - event_id}}" },
-          { "type": "TEMPLATE", "key": "eventTime", "value": "{{Event - event_time}}" },
-          { "type": "TEMPLATE", "key": "actionSource", "value": "website" },
-          { "type": "TEMPLATE", "key": "eventSourceUrl", "value": "{{Event - page_location}}" },
-          { "type": "TEMPLATE", "key": "value", "value": "{{Event - value}}" },
-          { "type": "TEMPLATE", "key": "currency", "value": "{{Event - currency}}" },
-          { "type": "TEMPLATE", "key": "userDataEm", "value": "{{Event - user_data.em}}" },
-          { "type": "TEMPLATE", "key": "userDataPh", "value": "{{Event - user_data.ph}}" },
-          { "type": "TEMPLATE", "key": "userDataFn", "value": "{{Event - user_data.fn}}" },
-          { "type": "TEMPLATE", "key": "userDataLn", "value": "{{Event - user_data.ln}}" },
-          { "type": "TEMPLATE", "key": "userDataExternalId", "value": "{{Event - user_data.external_id}}" },
-          { "type": "TEMPLATE", "key": "userDataFbp", "value": "{{Cookie - _fbp}}" },
-          { "type": "TEMPLATE", "key": "userDataFbc", "value": "{{Cookie - _fbc}}" },
-          { "type": "TEMPLATE", "key": "userDataClientIp", "value": "{{User IP Address}}" },
-          { "type": "TEMPLATE", "key": "userDataClientUa", "value": "{{User Agent}}" }
+          {
+            "type": "TEMPLATE",
+            "key": "pixelId",
+            "value": "{{FB_PIXEL_ID}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "accessToken",
+            "value": "{{FB_ACCESS_TOKEN}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "testEventCode",
+            "value": "{{FB_TEST_CODE}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventName",
+            "value": "Purchase"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventId",
+            "value": "{{Event - event_id}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventTime",
+            "value": "{{Event - event_time}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "actionSource",
+            "value": "website"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventSourceUrl",
+            "value": "{{Event - page_location}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "value",
+            "value": "{{Event - value}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "currency",
+            "value": "{{Event - currency}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataEm",
+            "value": "{{Event - user_data.em}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataPh",
+            "value": "{{Event - user_data.ph}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataFn",
+            "value": "{{Event - user_data.fn}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataLn",
+            "value": "{{Event - user_data.ln}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataExternalId",
+            "value": "{{Event - user_data.external_id}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataFbp",
+            "value": "{{Cookie - _fbp}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataFbc",
+            "value": "{{Cookie - _fbc}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataClientIp",
+            "value": "{{User IP Address}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataClientUa",
+            "value": "{{User Agent}}"
+          }
         ],
-        "firingTriggerId": ["2147479602"]
+        "firingTriggerId": [
+          "2147479602"
+        ]
       },
       {
         "tagId": "12",
         "name": "Meta CAPI — ViewContent / Lead / InitiateCheckout",
         "type": "cvt_fb_capi_stape",
         "parameter": [
-          { "type": "TEMPLATE", "key": "pixelId", "value": "{{FB_PIXEL_ID}}" },
-          { "type": "TEMPLATE", "key": "accessToken", "value": "{{FB_ACCESS_TOKEN}}" },
-          { "type": "TEMPLATE", "key": "testEventCode", "value": "{{FB_TEST_CODE}}" },
-          { "type": "TEMPLATE", "key": "eventName", "value": "{{Event Name Meta Mapping}}" },
-          { "type": "TEMPLATE", "key": "eventId", "value": "{{Event - event_id}}" },
-          { "type": "TEMPLATE", "key": "eventTime", "value": "{{Event - event_time}}" },
-          { "type": "TEMPLATE", "key": "actionSource", "value": "website" },
-          { "type": "TEMPLATE", "key": "eventSourceUrl", "value": "{{Event - page_location}}" },
-          { "type": "TEMPLATE", "key": "value", "value": "{{Event - value}}" },
-          { "type": "TEMPLATE", "key": "currency", "value": "{{Event - currency}}" },
-          { "type": "TEMPLATE", "key": "userDataEm", "value": "{{Event - user_data.em}}" },
-          { "type": "TEMPLATE", "key": "userDataFbp", "value": "{{Cookie - _fbp}}" },
-          { "type": "TEMPLATE", "key": "userDataFbc", "value": "{{Cookie - _fbc}}" },
-          { "type": "TEMPLATE", "key": "userDataClientIp", "value": "{{User IP Address}}" },
-          { "type": "TEMPLATE", "key": "userDataClientUa", "value": "{{User Agent}}" }
+          {
+            "type": "TEMPLATE",
+            "key": "pixelId",
+            "value": "{{FB_PIXEL_ID}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "accessToken",
+            "value": "{{FB_ACCESS_TOKEN}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "testEventCode",
+            "value": "{{FB_TEST_CODE}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventName",
+            "value": "{{Event Name Meta Mapping}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventId",
+            "value": "{{Event - event_id}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventTime",
+            "value": "{{Event - event_time}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "actionSource",
+            "value": "website"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "eventSourceUrl",
+            "value": "{{Event - page_location}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "value",
+            "value": "{{Event - value}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "currency",
+            "value": "{{Event - currency}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataEm",
+            "value": "{{Event - user_data.em}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataFbp",
+            "value": "{{Cookie - _fbp}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataFbc",
+            "value": "{{Cookie - _fbc}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataClientIp",
+            "value": "{{User IP Address}}"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "userDataClientUa",
+            "value": "{{User Agent}}"
+          }
         ],
-        "firingTriggerId": ["2147479603"]
+        "firingTriggerId": [
+          "2147479603"
+        ]
       }
     ],
     "trigger": [
-      { "triggerId": "2147479601", "name": "Any event", "type": "ALWAYS" },
-      { "triggerId": "2147479602", "name": "Event - purchase", "type": "CUSTOM_EVENT", "filter": [{ "type": "EQUALS", "parameter": [{ "type": "TEMPLATE", "key": "arg0", "value": "{{Event Name}}" }, { "type": "TEMPLATE", "key": "arg1", "value": "purchase" }] }] },
-      { "triggerId": "2147479603", "name": "Event - meta-trackable", "type": "CUSTOM_EVENT", "filter": [{ "type": "MATCH_REGEX", "parameter": [{ "type": "TEMPLATE", "key": "arg0", "value": "{{Event Name}}" }, { "type": "TEMPLATE", "key": "arg1", "value": "^(view_content|lead|initiate_checkout)$" }] }] }
+      {
+        "triggerId": "2147479601",
+        "name": "Any event",
+        "type": "ALWAYS"
+      },
+      {
+        "triggerId": "2147479602",
+        "name": "Event - purchase",
+        "type": "CUSTOM_EVENT",
+        "filter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{Event Name}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "purchase"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "triggerId": "2147479603",
+        "name": "Event - meta-trackable",
+        "type": "CUSTOM_EVENT",
+        "filter": [
+          {
+            "type": "MATCH_REGEX",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{Event Name}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "^(view_content|lead|initiate_checkout)$"
+              }
+            ]
+          }
+        ]
+      }
     ],
     "variable": [
-      { "variableId": "20", "name": "Event - event_id", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "event_id" }] },
-      { "variableId": "21", "name": "Event - event_time", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "event_time" }] },
-      { "variableId": "22", "name": "Event - value", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "value" }] },
-      { "variableId": "23", "name": "Event - currency", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "currency" }, { "type": "TEMPLATE", "key": "defaultValue", "value": "USD" }] },
-      { "variableId": "24", "name": "Event - page_location", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "page_location" }] },
-      { "variableId": "25", "name": "Event - user_data.em", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "user_data.em" }] },
-      { "variableId": "26", "name": "Event - user_data.ph", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "user_data.ph" }] },
-      { "variableId": "27", "name": "Event - user_data.fn", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "user_data.fn" }] },
-      { "variableId": "28", "name": "Event - user_data.ln", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "user_data.ln" }] },
-      { "variableId": "29", "name": "Event - user_data.external_id", "type": "eventd", "parameter": [{ "type": "TEMPLATE", "key": "key", "value": "user_data.external_id" }] },
-      { "variableId": "30", "name": "Cookie - _fbp", "type": "c", "parameter": [{ "type": "TEMPLATE", "key": "name", "value": "_fbp" }] },
-      { "variableId": "31", "name": "Cookie - _fbc", "type": "c", "parameter": [{ "type": "TEMPLATE", "key": "name", "value": "_fbc" }] },
-      { "variableId": "32", "name": "User IP Address", "type": "reqh", "parameter": [{ "type": "TEMPLATE", "key": "headerName", "value": "X-Forwarded-For" }] },
-      { "variableId": "33", "name": "User Agent", "type": "reqh", "parameter": [{ "type": "TEMPLATE", "key": "headerName", "value": "User-Agent" }] },
-      { "variableId": "34", "name": "Event Name", "type": "evn" },
-      { "variableId": "35", "name": "Event Name Meta Mapping", "type": "smm", "parameter": [
-        { "type": "TEMPLATE", "key": "input", "value": "{{Event Name}}" },
-        { "type": "LIST", "key": "map", "list": [
-          { "type": "MAP", "map": [{ "type": "TEMPLATE", "key": "key", "value": "view_content" }, { "type": "TEMPLATE", "key": "value", "value": "ViewContent" }] },
-          { "type": "MAP", "map": [{ "type": "TEMPLATE", "key": "key", "value": "lead" }, { "type": "TEMPLATE", "key": "value", "value": "Lead" }] },
-          { "type": "MAP", "map": [{ "type": "TEMPLATE", "key": "key", "value": "initiate_checkout" }, { "type": "TEMPLATE", "key": "value", "value": "InitiateCheckout" }] }
-        ] }
-      ] }
+      {
+        "variableId": "20",
+        "name": "Event - event_id",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "event_id"
+          }
+        ]
+      },
+      {
+        "variableId": "21",
+        "name": "Event - event_time",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "event_time"
+          }
+        ]
+      },
+      {
+        "variableId": "22",
+        "name": "Event - value",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "value"
+          }
+        ]
+      },
+      {
+        "variableId": "23",
+        "name": "Event - currency",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "currency"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "defaultValue",
+            "value": "USD"
+          }
+        ]
+      },
+      {
+        "variableId": "24",
+        "name": "Event - page_location",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "page_location"
+          }
+        ]
+      },
+      {
+        "variableId": "25",
+        "name": "Event - user_data.em",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "user_data.em"
+          }
+        ]
+      },
+      {
+        "variableId": "26",
+        "name": "Event - user_data.ph",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "user_data.ph"
+          }
+        ]
+      },
+      {
+        "variableId": "27",
+        "name": "Event - user_data.fn",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "user_data.fn"
+          }
+        ]
+      },
+      {
+        "variableId": "28",
+        "name": "Event - user_data.ln",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "user_data.ln"
+          }
+        ]
+      },
+      {
+        "variableId": "29",
+        "name": "Event - user_data.external_id",
+        "type": "eventd",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "key",
+            "value": "user_data.external_id"
+          }
+        ]
+      },
+      {
+        "variableId": "30",
+        "name": "Cookie - _fbp",
+        "type": "c",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "_fbp"
+          }
+        ]
+      },
+      {
+        "variableId": "31",
+        "name": "Cookie - _fbc",
+        "type": "c",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "name",
+            "value": "_fbc"
+          }
+        ]
+      },
+      {
+        "variableId": "32",
+        "name": "User IP Address",
+        "type": "reqh",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "headerName",
+            "value": "X-Forwarded-For"
+          }
+        ]
+      },
+      {
+        "variableId": "33",
+        "name": "User Agent",
+        "type": "reqh",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "headerName",
+            "value": "User-Agent"
+          }
+        ]
+      },
+      {
+        "variableId": "34",
+        "name": "Event Name",
+        "type": "evn"
+      },
+      {
+        "variableId": "35",
+        "name": "Event Name Meta Mapping",
+        "type": "smm",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "input",
+            "value": "{{Event Name}}"
+          },
+          {
+            "type": "LIST",
+            "key": "map",
+            "list": [
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "view_content"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "ViewContent"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "lead"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Lead"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "initiate_checkout"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "InitiateCheckout"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     ]
   }
 }
