@@ -9,10 +9,13 @@
 <meta property="og:description" content="Tu dinero está en algún lado. ¿Sabes dónde?" />
 <title>Planilla Inteligente · Tu dinero, visible.</title>
 
-<!-- Performance: preconnect critical external domains -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- DNS hint apenas para CDN de avatares opcional -->
 <link rel="dns-prefetch" href="https://i.pravatar.cc" />
+
+<!-- Preload das fontes críticas (self-hosted: zero handshake externo) -->
+<link rel="preload" as="font" type="font/woff2" href="/fonts/geist-900-normal-latin.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/geist-700-normal-latin.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-500-italic-latin.woff2" crossorigin />
 
 <!-- Preload da imagem LCP em WebP responsivo -->
 <link
@@ -24,10 +27,7 @@
   fetchpriority="high"
 />
 
-<!-- Fontes: pesos realmente usados -->
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,14..144,400;1,14..144,500&display=swap" rel="stylesheet" />
-
-<!-- CSS pré-compilado (substitui Tailwind CDN — ganho enorme de LCP) -->
+<!-- CSS pré-compilado (inclui fontes self-hosted e Tailwind) -->
 <link rel="stylesheet" href="./css/styles.css" />
 
 </head>
