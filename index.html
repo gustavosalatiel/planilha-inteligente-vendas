@@ -12,167 +12,24 @@
 <!-- Performance: preconnect critical external domains -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin />
 <link rel="dns-prefetch" href="https://i.pravatar.cc" />
 
-<!-- Preload critical resources -->
-<link rel="preload" as="image" href="f70cb841-0f64-40b3-91cc-c0418415db03.png" fetchpriority="high" />
-<link rel="preload" as="script" href="https://cdn.tailwindcss.com" crossorigin />
+<!-- Preload da imagem LCP em WebP responsivo -->
+<link
+  rel="preload"
+  as="image"
+  href="./img/f70cb841-0f64-40b3-91cc-c0418415db03-800.webp"
+  imagesrcset="./img/f70cb841-0f64-40b3-91cc-c0418415db03-480.webp 480w, ./img/f70cb841-0f64-40b3-91cc-c0418415db03-800.webp 800w, ./img/f70cb841-0f64-40b3-91cc-c0418415db03-1200.webp 1200w"
+  imagesizes="(max-width: 640px) 92vw, (max-width: 1024px) 80vw, 560px"
+  fetchpriority="high"
+/>
 
-<!-- Optimized fonts: only weights actually used, with swap for faster paint -->
+<!-- Fontes: pesos realmente usados -->
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,14..144,400;1,14..144,500&display=swap" rel="stylesheet" />
 
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          display: ['Geist', 'system-ui', 'sans-serif'],
-          serif:   ['Fraunces', 'Georgia', 'serif'],
-          sans:    ['Geist', 'system-ui', 'sans-serif'],
-        },
-        colors: {
-          ink:     '#0A0A0A',
-          ink2:    '#171717',
-          muted:   '#737373',
-          line:    '#E5E5E5',
-          lineSoft:'#F5F5F5',
-          paper:   '#FFFFFF',
-          surface: '#FAFAFA',
-          green:   '#10B981',
-          greenHi: '#059669',
-          greenSoft:'#ECFDF5',
-          red:     '#EF4444',
-        },
-        keyframes: {
-          floatY:   { '0%,100%':{transform:'translateY(0)'}, '50%':{transform:'translateY(-4px)'} },
-          fadeUp:   { '0%':{opacity:'0',transform:'translateY(24px)'}, '100%':{opacity:'1',transform:'translateY(0)'} },
-          dot:      { '0%,100%':{opacity:'1'}, '50%':{opacity:'.3'} },
-        },
-        animation: {
-          floatY:   'floatY 5s ease-in-out infinite',
-          fadeUp:   'fadeUp 0.9s ease-out forwards',
-          dot:      'dot 1.4s ease-in-out infinite',
-        },
-      }
-    }
-  }
-</script>
-<style>
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-  body {
-    font-family: 'Geist', system-ui, sans-serif;
-    background: #FFFFFF;
-    color: #0A0A0A;
-    overflow-x: hidden;
-    font-feature-settings: "ss03", "ss04";
-  }
-  .display { font-family: 'Geist', system-ui, sans-serif; letter-spacing: -0.045em; font-weight: 900; }
-  .serif   { font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-style: italic; letter-spacing: -0.015em; }
+<!-- CSS pré-compilado (substitui Tailwind CDN — ganho enorme de LCP) -->
+<link rel="stylesheet" href="./css/styles.css" />
 
-  /* Fluid typography — massive display sizes, clean body */
-  .t-mega   { font-size: clamp(52px, 12vw, 128px); line-height: .88; font-weight: 900; letter-spacing: -0.05em; }
-  .t-h2     { font-size: clamp(36px, 7.5vw, 72px); line-height: .96; font-weight: 800; letter-spacing: -0.04em; }
-  .t-h3     { font-size: clamp(28px, 5vw, 44px); line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; }
-  .t-h4     { font-size: clamp(20px, 3.5vw, 26px); line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
-  .t-lead   { font-size: clamp(18px, 3.6vw, 22px); line-height: 1.5; }
-  .t-body   { font-size: clamp(15px, 3.5vw, 17px); line-height: 1.65; }
-  .t-kick   { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
-  .t-price  { font-size: clamp(88px, 20vw, 144px); line-height: .88; font-weight: 900; letter-spacing: -0.065em; }
-
-  a, button, summary { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  .tap-52 { min-height: 52px; }
-
-  /* CTA — clean, confident */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-    padding: 18px 28px; border-radius: 12px; font-weight: 600; font-size: 16px;
-    transition: all .18s ease;
-  }
-  .btn-primary {
-    background: #0A0A0A; color: #FFFFFF;
-  }
-  .btn-primary:hover { background: #171717; transform: translateY(-1px); }
-  .btn-secondary {
-    background: transparent; color: #0A0A0A; border: 1px solid #E5E5E5;
-  }
-  .btn-secondary:hover { border-color: #0A0A0A; }
-
-  /* Screenshot container — subtle shadow for depth */
-  .screenshot {
-    filter: drop-shadow(0 30px 60px rgba(10,10,10,.18)) drop-shadow(0 10px 20px rgba(10,10,10,.06));
-  }
-
-  /* Divider */
-  .rule { border-top: 1px solid #E5E5E5; }
-
-  /* Highlighted word */
-  .underline-hand {
-    background: linear-gradient(180deg, transparent 62%, #10B981 62%, #10B981 82%, transparent 82%);
-    padding: 0 .05em;
-  }
-
-  /* Quote mark */
-  .quote-mark::before {
-    content: "\201C";
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 4em;
-    line-height: 0;
-    color: #10B981;
-    position: absolute;
-    top: .5em;
-    left: .4em;
-    opacity: .3;
-  }
-
-  @media (max-width: 767px) {
-    body { padding-bottom: 88px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
-
-  /* Purchase notification toast */
-  .purchase-toast {
-    position: fixed;
-    bottom: 100px;
-    left: 16px;
-    z-index: 60;
-    max-width: 320px;
-    background: #FFFFFF;
-    border: 1px solid #E5E5E5;
-    border-radius: 14px;
-    box-shadow: 0 12px 32px -8px rgba(10,10,10,0.18), 0 4px 12px -4px rgba(10,10,10,0.1);
-    padding: 12px 14px 12px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    transform: translateY(20px) translateX(-10px);
-    pointer-events: none;
-    transition: opacity .4s ease, transform .4s ease;
-  }
-  .purchase-toast.show {
-    opacity: 1;
-    transform: translateY(0) translateX(0);
-    pointer-events: auto;
-  }
-  @media (min-width: 768px) {
-    .purchase-toast { bottom: 24px; left: 24px; }
-  }
-
-  /* Performance: skip rendering off-screen sections until near viewport */
-  .cv-auto {
-    content-visibility: auto;
-    contain-intrinsic-size: 800px;
-  }
-
-  /* Prevent image layout shift — reserve aspect ratio */
-  img { height: auto; }
-</style>
 </head>
 
 <body>
@@ -234,7 +91,9 @@
     <!-- Product hero image — directly below headline -->
     <div class="mt-10 sm:mt-12 relative -mx-5 sm:mx-auto sm:max-w-[760px] px-2 sm:px-0">
       <img
-        src="f70cb841-0f64-40b3-91cc-c0418415db03.png"
+        src="./img/f70cb841-0f64-40b3-91cc-c0418415db03-800.webp"
+        srcset="./img/f70cb841-0f64-40b3-91cc-c0418415db03-480.webp 480w, ./img/f70cb841-0f64-40b3-91cc-c0418415db03-800.webp 800w, ./img/f70cb841-0f64-40b3-91cc-c0418415db03-1200.webp 1200w"
+        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 80vw, 760px"
         alt="Planilla Inteligente — En todos tus dispositivos"
         class="w-full"
         loading="eager"
@@ -284,7 +143,7 @@
       </p>
       <div class="-mx-5 sm:mx-auto rounded-lg overflow-hidden">
         <img
-          src="2b72d55f-6d8f-410e-b9c7-5f69c261c4aa.png"
+          src="./img/2b72d55f-6d8f-410e-b9c7-5f69c261c4aa.webp"
           alt="Mensajes reales de alumnas que usan la planilla"
           class="w-full block"
           loading="lazy"
@@ -308,7 +167,7 @@
     <!-- Image with vignette blend into section bg -->
     <div class="relative mt-10 sm:mt-14 -mx-5 sm:mx-auto sm:max-w-[680px] px-2 sm:px-0">
       <img
-        src="a47981e7-3275-44de-8acc-03e04d4e83b5.png"
+        src="./img/a47981e7-3275-44de-8acc-03e04d4e83b5.webp"
         alt="Los pensamientos que no te dejan dormir"
         class="w-full block"
         loading="lazy"
@@ -449,9 +308,9 @@
 
     <!-- 3 phones showcasing full dashboard -->
     <div class="flex justify-center items-end gap-1 sm:gap-3 max-w-[1100px] mx-auto">
-      <img src="ddf7f1bc-ad83-4569-a25c-0648b2b0fce9.png" alt="Saldo total y carta del domingo" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
-      <img src="da444664-8d6e-4c2d-8198-4f3b315ff292.png" alt="Tarjetas y próximas cuentas" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
-      <img src="f9af2857-0fab-49f0-bf3e-5dd7735dd3c6.png" alt="Gráfico circular de gastos y movimientos" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
+      <img src="./img/ddf7f1bc-ad83-4569-a25c-0648b2b0fce9.webp" alt="Saldo total y carta del domingo" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
+      <img src="./img/da444664-8d6e-4c2d-8198-4f3b315ff292.webp" alt="Tarjetas y próximas cuentas" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
+      <img src="./img/f9af2857-0fab-49f0-bf3e-5dd7735dd3c6.webp" alt="Gráfico circular de gastos y movimientos" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async" width="360" height="740"/>
     </div>
 
     <!-- Features list · premium cards -->
@@ -603,8 +462,8 @@
 
     <!-- 2 phones side by side -->
     <div class="flex justify-center items-end gap-2 sm:gap-6 max-w-[1000px] mx-auto">
-      <img src="dafd3ff1-98fa-4caa-bd77-0538b371b8af.png" alt="Vista mensual del calendario con vencimientos" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async" width="520" height="1068"/>
-      <img src="a73a45f7-1e33-48f0-876b-21d414f6f22a.png" alt="Detalle del día con aviso de pago próximo" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async" width="520" height="1068"/>
+      <img src="./img/dafd3ff1-98fa-4caa-bd77-0538b371b8af.webp" alt="Vista mensual del calendario con vencimientos" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async" width="520" height="1068"/>
+      <img src="./img/a73a45f7-1e33-48f0-876b-21d414f6f22a.webp" alt="Detalle del día con aviso de pago próximo" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async" width="520" height="1068"/>
     </div>
 
     <!-- Features list · premium cards -->
@@ -756,8 +615,8 @@
 
     <!-- iPad + Macbook side by side -->
     <div class="flex justify-center items-end gap-2 sm:gap-8 max-w-[1280px] mx-auto">
-      <img src="5f90412b-d3cc-4ae7-9ae8-fa35bbf51c43.png" alt="Planilla Inteligente en iPad" class="w-[40%] max-w-[520px]" loading="lazy" decoding="async" width="520" height="720"/>
-      <img src="2efef129-c44a-46a7-b45f-8193b02895ef.png" alt="Planilla Inteligente en MacBook" class="w-[60%] max-w-[780px]" loading="lazy" decoding="async" width="780" height="480"/>
+      <img src="./img/5f90412b-d3cc-4ae7-9ae8-fa35bbf51c43.webp" alt="Planilla Inteligente en iPad" class="w-[40%] max-w-[520px]" loading="lazy" decoding="async" width="520" height="720"/>
+      <img src="./img/2efef129-c44a-46a7-b45f-8193b02895ef.webp" alt="Planilla Inteligente en MacBook" class="w-[60%] max-w-[780px]" loading="lazy" decoding="async" width="780" height="480"/>
     </div>
 
     <!-- Benefits row -->
@@ -890,7 +749,7 @@
         <div class="relative max-w-[380px] w-full">
           <div class="aspect-square overflow-hidden rounded-3xl shadow-[0_30px_60px_-20px_rgba(10,10,10,0.3)] ring-1 ring-line">
             <img
-              src="roudakova.anna_669755033_18577090384058295_4019744744811644976_n.jpg"
+              src="./img/roudakova.anna_669755033_18577090384058295_4019744744811644976_n.webp"
               alt="Helena Rodríguez presentando en conferencia"
               class="w-full h-full object-cover"
               loading="lazy"
@@ -949,7 +808,7 @@
     <div class="mt-20 sm:mt-24 bg-ink text-white rounded-3xl p-6 sm:p-10 grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-12 items-center relative overflow-hidden">
       <!-- Conference image -->
       <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-        <img src="893d137c-4202-47f3-bdd7-4eff8cf4e86c.png" alt="Helena presentando la Plantilla de Control Financiero en conferencia ante más de 400 personas" class="w-full block" loading="lazy" decoding="async" width="1200" height="675"/>
+        <img src="./img/893d137c-4202-47f3-bdd7-4eff8cf4e86c.webp" alt="Helena presentando la Plantilla de Control Financiero en conferencia ante más de 400 personas" class="w-full block" loading="lazy" decoding="async" width="1200" height="675"/>
         <!-- Live badge -->
         <div class="absolute top-3 left-3 bg-red text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-white animate-dot"></span>
@@ -1035,7 +894,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="download%20%282%29.jpg" alt="Rafael Alarcón" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
+              <img src="./img/download%20(2).webp" alt="Rafael Alarcón" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Rafael Alarcón</div>
@@ -1061,7 +920,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="download%20%2826%29.jpg" alt="Julia Palacios" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
+              <img src="./img/download%20(26).webp" alt="Julia Palacios" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Julia Palacios</div>
@@ -1087,7 +946,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
-              <img src="Comente%20CASAL%20para%20receber%20os%20Prompts%20%F0%9F%8E%81.jpg" alt="Lucía y Santiago — pareja" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
+              <img src="./img/Comente%20CASAL%20para%20receber%20os%20Prompts%20%F0%9F%8E%81.webp" alt="Lucía y Santiago — pareja" class="w-full h-full object-cover" loading="lazy" decoding="async" width="120" height="120"/>
             </div>
             <div>
               <div class="display font-bold text-[16px] leading-tight">Lucía y Santiago</div>
