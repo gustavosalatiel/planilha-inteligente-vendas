@@ -129,7 +129,9 @@ async function step_index_has_scripts() {
   try {
     const r = await fetch(`${SITE}/`);
     const html = await r.text();
-    const has_cbid = /Cookiebot.*data-cbid="[0-9a-f-]{8,}"/i.test(html) || /data-cbid="[0-9a-f-]{8,}"/i.test(html);
+    // CBID pode estar em atributo HTML (data-cbid="uuid") ou via setAttribute('data-cbid','uuid')
+    // Aceita ambos os estilos de aspas (" ou ').
+    const has_cbid = /data-cbid['"]?\s*[,:=]?\s*['"][0-9a-f-]{8,}['"]/i.test(html);
     const has_tracking = /\/js\/tracking\.js/.test(html);
     const has_utmify = /cdn\.utmify\.com\.br/.test(html);
     log("index.html: Cookiebot real", has_cbid);
