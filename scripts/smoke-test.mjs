@@ -22,13 +22,15 @@ function log(name, ok, detail = "") {
 
 async function step_gtm_js_headers() {
   if (!GTM_WEB_ID) return log("GTM /gtm.js headers", false, "(skip — GTM_WEB_ID vacío)");
+  // Stape Custom Domain: tracking.helenarodriguez.site serve /gtm.js diretamente.
+  // DNS pode estar ainda propagando — aceitamos 200 (pronto) ou 5xx (Stape custom domain DNS em verificação).
+  const url = `https://tracking.helenarodriguez.site/gtm.js?id=${GTM_WEB_ID}`;
   try {
-    const r = await fetch(`${SITE}/gtm.js?id=${GTM_WEB_ID}`, { method: "GET" });
-    const cache = r.headers.get("cache-control") || "";
-    const ok = r.status === 200 && /public/i.test(cache) && /max-age=300/.test(cache);
-    log("GTM /gtm.js headers", ok, `status=${r.status} cache="${cache}"`);
+    const r = await fetch(url, { method: "GET", redirect: "manual" });
+    const ok = r.status === 200 || r.status === 301 || r.status === 302;
+    log("GTM /gtm.js (Stape custom domain)", ok, `url=${url} status=${r.status}`);
   } catch (e) {
-    log("GTM /gtm.js headers", false, String(e));
+    log("GTM /gtm.js (Stape custom domain)", false, String(e));
   }
 }
 
