@@ -3,6 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<!-- Consent Mode v2 — defaults GDPR-first (aplica a TODAS las regiones) -->
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'denied',personalization_storage:'denied',security_storage:'granted',wait_for_update:500});
+gtag('set','ads_data_redaction',true);
+gtag('set','url_passthrough',true);
+</script>
+
+<!-- Cookiebot CMP — banner en español para UE + LATAM. Reemplazar data-cbid tras crear la cuenta. -->
+<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="8e246654-8eed-4b29-b1c7-2ba59d8fc284" data-blockingmode="auto" data-culture="ES" type="text/javascript" async></script>
+
 <meta name="description" content="Una planilla inteligente que te dice a dónde se va tu dinero. En 7 días." />
 <meta name="theme-color" content="#0A0A0A" />
 <meta property="og:title" content="Planilla Inteligente" />
@@ -56,7 +68,7 @@
       <a href="#precio" class="hover:text-ink">Precio</a>
       <a href="#dudas" class="hover:text-ink">Dudas</a>
     </nav>
-    <a href="#producto" class="btn btn-primary !py-2.5 !px-5 !text-[14px] tap-52">
+    <a href="#producto" class="btn btn-primary !py-2.5 !px-5 !text-[14px] tap-52" data-cta="header-comenzar">
       <span>Comenzar</span>
       <span>→</span>
     </a>
@@ -111,11 +123,11 @@
 
     <!-- CTAs -->
     <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <a href="#producto" class="btn btn-primary tap-52 w-full sm:w-auto !py-3.5 !px-6 !text-[15px]">
+      <a href="#producto" class="btn btn-primary tap-52 w-full sm:w-auto !py-3.5 !px-6 !text-[15px]" data-cta="hero-ver-como-funciona">
         <span>Ver cómo funciona</span>
         <span>→</span>
       </a>
-      <a href="#precio" class="btn btn-secondary tap-52 w-full sm:w-auto !py-3.5 !px-6 !text-[15px]">
+      <a href="#precio" class="btn btn-secondary tap-52 w-full sm:w-auto !py-3.5 !px-6 !text-[15px]" data-cta="hero-precio">
         <span>Precio y acceso</span>
       </a>
     </div>
@@ -1787,6 +1799,22 @@
     }, { rootMargin: '0px 0px -30% 0px' }).observe(price);
   })();
 </script>
+
+<!-- UTMify pixel — solo atribución/dashboard. Persiste UTMs en localStorage.utmify_data.
+     CRÍTICO: en el panel de UTMify, Facebook Pixel y CAPI están DESACTIVADOS (opción A)
+     porque nuestra pipeline Stape es la única dueña de la dedup Browser↔Server.
+     Si se reactivan, Meta recibirá Purchase duplicado y la dedup quebra. -->
+<script>
+  window.pixelId = "69eb02f35a495b63bf076849";
+  var a = document.createElement("script");
+  a.setAttribute("async", "");
+  a.setAttribute("defer", "");
+  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+  document.head.appendChild(a);
+</script>
+
+<!-- Tracking bundle — lazy load vía esbuild IIFE, no bloquea render -->
+<script src="/js/tracking.js" defer></script>
 
 </body>
 </html>

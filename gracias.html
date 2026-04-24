@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>¡Gracias! Tu Planilla Inteligente está en camino</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="stylesheet" href="/css/styles.css" />
+
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'denied',personalization_storage:'denied',security_storage:'granted',wait_for_update:500});
+gtag('set','ads_data_redaction',true);
+gtag('set','url_passthrough',true);
+</script>
+</head>
+<body class="min-h-screen bg-white flex items-center justify-center p-6">
+
+<main class="max-w-[600px] text-center">
+  <div class="w-16 h-16 mx-auto rounded-full bg-green/15 flex items-center justify-center mb-6">
+    <span class="text-green text-3xl">✓</span>
+  </div>
+
+  <h1 class="display text-4xl sm:text-5xl tracking-[-0.04em] mb-4">
+    ¡Listo, <span id="firstName">amiga</span>!
+  </h1>
+
+  <p class="serif text-xl text-ink2 mb-8 leading-[1.5]">
+    Tu compra fue confirmada. En los próximos <strong class="text-ink">5 minutos</strong> recibirás el acceso en tu correo.
+  </p>
+
+  <div class="border border-line rounded-xl p-6 text-left space-y-4 mb-8">
+    <h2 class="font-bold text-lg">¿Qué sigue ahora?</h2>
+    <ol class="space-y-3 text-ink2">
+      <li><span class="font-bold text-ink">1.</span> Revisa tu bandeja de entrada (y spam). El asunto es "Tu Planilla está aquí".</li>
+      <li><span class="font-bold text-ink">2.</span> Abre el enlace para hacer una copia de la Planilla en tu Google Drive.</li>
+      <li><span class="font-bold text-ink">3.</span> Únete al grupo privado de Telegram <a href="https://t.me/+XXXXXXXXXX" class="underline">aquí</a> para dudas y actualizaciones.</li>
+    </ol>
+  </div>
+
+  <p class="text-sm text-muted">
+    ¿No llegó el correo en 10 minutos? Escríbenos a <a href="mailto:hola@helenarodriguez.site" class="underline">hola@helenarodriguez.site</a>
+  </p>
+</main>
+
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  var oid = p.get('oid');
+  var value = parseFloat(p.get('v') || '47');
+  var currency = p.get('c') || 'USD';
+  var name = p.get('n');
+
+  if (name) {
+    var el = document.getElementById('firstName');
+    if (el) el.textContent = name;
+  }
+
+  if (!oid) return;
+
+  var cookieKey = '_purchase_fired_' + oid;
+  if (document.cookie.indexOf(cookieKey + '=1') !== -1) return;
+
+  // Lee UTMs persistidos por UTMify — opción A, solo atribución.
+  var utm = {};
+  try { utm = JSON.parse(localStorage.getItem('utmify_data') || '{}') || {}; } catch(e){}
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'purchase',
+    event_id: oid,
+    event_time: Math.floor(Date.now()/1000),
+    page_location: location.href,
+    page_title: document.title,
+    value: value,
+    currency: currency,
+    utm_source: utm.utm_source,
+    utm_medium: utm.utm_medium,
+    utm_campaign: utm.utm_campaign,
+    utm_content: utm.utm_content,
+    utm_term: utm.utm_term,
+    items: [{
+      item_id: 'planilla-inteligente',
+      item_name: 'Planilla Inteligente',
+      price: value,
+      quantity: 1
+    }]
+  });
+
+  var d = new Date(); d.setTime(d.getTime() + 7*24*60*60*1000);
+  document.cookie = cookieKey + '=1; expires=' + d.toUTCString() + '; path=/; SameSite=Lax; Secure';
+})();
+</script>
+
+<script src="/js/tracking.js" defer></script>
+</body>
+</html>

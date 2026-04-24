@@ -3,13 +3,19 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "tailwindcss -i ./src/input.css -o ./css/styles.css --minify",
+    "build:css": "tailwindcss -i ./src/input.css -o ./css/styles.css --minify",
+    "build:tracking": "node scripts/build-tracking.mjs",
+    "build": "npm run build:css && npm run build:tracking",
     "dev": "tailwindcss -i ./src/input.css -o ./css/styles.css --watch"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
+    "@types/node": "^22.5.0",
+    "@vercel/node": "^3.2.0",
+    "esbuild": "^0.24.0",
     "sharp": "^0.34.5",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.5.0"
   }
 }

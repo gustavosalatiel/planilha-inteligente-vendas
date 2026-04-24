@@ -10,3 +10,8 @@ Thumbs.db
 .vscode/
 
 .vercel
+
+# Build artifacts (generados por npm run build)
+css/styles.css
+js/tracking.js
+IDS-CAPTURADOS.md
