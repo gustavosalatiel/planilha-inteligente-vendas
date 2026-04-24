@@ -1,0 +1,1876 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="Una planilla inteligente que te dice a dónde se va tu dinero. En 7 días." />
+<meta name="theme-color" content="#0A0A0A" />
+<meta property="og:title" content="Planilla Inteligente" />
+<meta property="og:description" content="Tu dinero está en algún lado. ¿Sabes dónde?" />
+<title>Planilla Inteligente · Tu dinero, visible.</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,14..144,400;1,14..144,500;1,14..144,600&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Geist', 'system-ui', 'sans-serif'],
+          serif:   ['Fraunces', 'Georgia', 'serif'],
+          sans:    ['Geist', 'system-ui', 'sans-serif'],
+        },
+        colors: {
+          ink:     '#0A0A0A',
+          ink2:    '#171717',
+          muted:   '#737373',
+          line:    '#E5E5E5',
+          lineSoft:'#F5F5F5',
+          paper:   '#FFFFFF',
+          surface: '#FAFAFA',
+          green:   '#10B981',
+          greenHi: '#059669',
+          greenSoft:'#ECFDF5',
+          red:     '#EF4444',
+        },
+        keyframes: {
+          floatY:   { '0%,100%':{transform:'translateY(0)'}, '50%':{transform:'translateY(-4px)'} },
+          fadeUp:   { '0%':{opacity:'0',transform:'translateY(24px)'}, '100%':{opacity:'1',transform:'translateY(0)'} },
+          dot:      { '0%,100%':{opacity:'1'}, '50%':{opacity:'.3'} },
+        },
+        animation: {
+          floatY:   'floatY 5s ease-in-out infinite',
+          fadeUp:   'fadeUp 0.9s ease-out forwards',
+          dot:      'dot 1.4s ease-in-out infinite',
+        },
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Geist', system-ui, sans-serif;
+    background: #FFFFFF;
+    color: #0A0A0A;
+    overflow-x: hidden;
+    font-feature-settings: "ss03", "ss04";
+  }
+  .display { font-family: 'Geist', system-ui, sans-serif; letter-spacing: -0.045em; font-weight: 900; }
+  .serif   { font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-style: italic; letter-spacing: -0.015em; }
+
+  /* Fluid typography — massive display sizes, clean body */
+  .t-mega   { font-size: clamp(52px, 12vw, 128px); line-height: .88; font-weight: 900; letter-spacing: -0.05em; }
+  .t-h2     { font-size: clamp(36px, 7.5vw, 72px); line-height: .96; font-weight: 800; letter-spacing: -0.04em; }
+  .t-h3     { font-size: clamp(28px, 5vw, 44px); line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; }
+  .t-h4     { font-size: clamp(20px, 3.5vw, 26px); line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+  .t-lead   { font-size: clamp(18px, 3.6vw, 22px); line-height: 1.5; }
+  .t-body   { font-size: clamp(15px, 3.5vw, 17px); line-height: 1.65; }
+  .t-kick   { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
+  .t-price  { font-size: clamp(88px, 20vw, 144px); line-height: .88; font-weight: 900; letter-spacing: -0.065em; }
+
+  a, button, summary { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .tap-52 { min-height: 52px; }
+
+  /* CTA — clean, confident */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 18px 28px; border-radius: 12px; font-weight: 600; font-size: 16px;
+    transition: all .18s ease;
+  }
+  .btn-primary {
+    background: #0A0A0A; color: #FFFFFF;
+  }
+  .btn-primary:hover { background: #171717; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; color: #0A0A0A; border: 1px solid #E5E5E5;
+  }
+  .btn-secondary:hover { border-color: #0A0A0A; }
+
+  /* Screenshot container — subtle shadow for depth */
+  .screenshot {
+    filter: drop-shadow(0 30px 60px rgba(10,10,10,.18)) drop-shadow(0 10px 20px rgba(10,10,10,.06));
+  }
+
+  /* Divider */
+  .rule { border-top: 1px solid #E5E5E5; }
+
+  /* Highlighted word */
+  .underline-hand {
+    background: linear-gradient(180deg, transparent 62%, #10B981 62%, #10B981 82%, transparent 82%);
+    padding: 0 .05em;
+  }
+
+  /* Quote mark */
+  .quote-mark::before {
+    content: "\201C";
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 4em;
+    line-height: 0;
+    color: #10B981;
+    position: absolute;
+    top: .5em;
+    left: .4em;
+    opacity: .3;
+  }
+
+  @media (max-width: 767px) {
+    body { padding-bottom: 88px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* Purchase notification toast */
+  .purchase-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 16px;
+    z-index: 60;
+    max-width: 320px;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px -8px rgba(10,10,10,0.18), 0 4px 12px -4px rgba(10,10,10,0.1);
+    padding: 12px 14px 12px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(20px) translateX(-10px);
+    pointer-events: none;
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .purchase-toast.show {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+    pointer-events: auto;
+  }
+  @media (min-width: 768px) {
+    .purchase-toast { bottom: 24px; left: 24px; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+  TOP ANNOUNCEMENT
+========================================================= -->
+<div class="bg-ink text-white text-center text-[13px] py-2.5 px-4">
+  <span class="inline-flex items-center gap-2">
+    <span class="w-1.5 h-1.5 rounded-full bg-green animate-dot"></span>
+    <span><strong class="text-green">Solo hoy · <span class="js-today-date">23 de abril</span></strong> · US$ 47 por US$ 19,90 · Cierra en <strong id="topTimer">—</strong></span>
+  </span>
+</div>
+
+<!-- =========================================================
+  HEADER
+========================================================= -->
+<header class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-line">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+    <a href="#top" class="display text-[22px] tracking-[-0.04em] font-extrabold">Planilla Inteligente.</a>
+    <nav class="hidden md:flex items-center gap-8 text-[14px] font-medium text-ink2">
+      <a href="#producto" class="hover:text-ink">El producto</a>
+      <a href="#metodo" class="hover:text-ink">Cómo funciona</a>
+      <a href="#precio" class="hover:text-ink">Precio</a>
+      <a href="#dudas" class="hover:text-ink">Dudas</a>
+    </nav>
+    <a href="#producto" class="btn btn-primary !py-2.5 !px-5 !text-[14px] tap-52">
+      <span>Comenzar</span>
+      <span>→</span>
+    </a>
+  </div>
+</header>
+
+<!-- =========================================================
+  HERO
+========================================================= -->
+<section id="top" class="relative">
+  <div class="max-w-[1100px] mx-auto px-5 sm:px-8 pt-12 sm:pt-16 pb-14 sm:pb-16">
+
+    <!-- Headline — three beats: promise broken → shock → real pain -->
+    <h1 class="text-center max-w-[900px] mx-auto">
+      <!-- Setup: the broken promise -->
+      <span class="block serif text-muted leading-[1.3] mb-3" style="font-size: clamp(17px, 3.2vw, 24px);">
+        Juraste que este mes iba a ser <span class="text-ink">distinto</span>.
+      </span>
+
+      <!-- Main punch: the shock -->
+      <span class="display block" style="font-size: clamp(36px, 7.5vw, 72px); line-height: 1; letter-spacing: -0.04em;">
+        Hoy abriste la cuenta<br/>
+        y <span class="text-red">no queda nada</span>.
+      </span>
+
+      <!-- Twist: the real pain -->
+      <span class="block serif text-ink leading-[1.25] mt-4 max-w-[26ch] mx-auto" style="font-size: clamp(18px, 3.5vw, 26px);">
+        Y ni siquiera puedes decir <span class="text-green">a dónde se fue</span>.
+      </span>
+    </h1>
+
+    <!-- Product hero image — directly below headline -->
+    <div class="mt-10 sm:mt-12 relative -mx-5 sm:mx-auto sm:max-w-[760px] px-2 sm:px-0">
+      <img
+        src="f70cb841-0f64-40b3-91cc-c0418415db03.png"
+        alt="Planilla Inteligente — En todos tus dispositivos"
+        class="w-full"
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+
+    <!-- Subline — promise block -->
+    <p class="text-center text-ink2 mt-12 max-w-[620px] mx-auto" style="font-size: clamp(15px, 3.2vw, 18px); line-height: 1.55;">
+      Organiza tus finanzas en minutos, <strong>deja de perder dinero sin darte cuenta</strong> y mira exactamente a dónde se va cada centavo — de una forma simple, práctica y sin complicaciones.
+    </p>
+
+    <!-- CTAs -->
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="#producto" class="btn btn-primary tap-52 w-full sm:w-auto !py-3.5 !px-6 !text-[15px]">
+        <span>Ver cómo funciona</span>
+        <span>→</span>
+      </a>
+      <a href="#precio" class="btn btn-secondary tap-52 w-full sm:w-auto !py-3.5 !px-6 !text-[15px]">
+        <span>Precio y acceso</span>
+      </a>
+    </div>
+
+    <!-- Social proof line -->
+    <div class="mt-6 flex items-center justify-center gap-4 text-[12px] text-muted flex-wrap">
+      <span class="flex items-center gap-1.5"><span class="text-green">★★★★★</span> 4,9 / 5</span>
+      <span>·</span>
+      <span>2.188 reseñas reales</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+  EMOTIONAL AGITATION · pain visualized
+========================================================= -->
+<section class="bg-ink text-white border-y border-ink">
+  <div class="max-w-[900px] mx-auto px-5 sm:px-8 py-20 sm:py-28 text-center">
+
+    <!-- Real testimonials from the community -->
+    <div class="mb-16 sm:mb-20 max-w-[760px] mx-auto">
+      <p class="serif text-white mb-5" style="font-size: clamp(18px, 3.8vw, 24px); line-height: 1.35;">
+        Mira cómo <span class="text-green">personas reales</span> están saliendo del apuro con esta planilla:
+      </p>
+      <div class="-mx-5 sm:mx-auto rounded-lg overflow-hidden">
+        <img
+          src="2b72d55f-6d8f-410e-b9c7-5f69c261c4aa.png"
+          alt="Mensajes reales de alumnas que usan la planilla"
+          class="w-full block"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    </div>
+
+    <!-- Top headline -->
+    <h2 class="display text-white max-w-[22ch] mx-auto" style="font-size: clamp(28px, 6.2vw, 46px); line-height: 1.1; letter-spacing: -0.035em;">
+      Ya no aguantas ver cómo tu dinero <span class="text-green">desaparece</span> cada mes.
+    </h2>
+
+    <!-- Sub text bridging to image -->
+    <p class="mt-6 max-w-[50ch] mx-auto text-white/75" style="font-size: clamp(16px, 3.5vw, 20px); line-height: 1.5;">
+      Hoy vives en un ciclo vicioso de <strong class="text-white">preocupación constante</strong> con cuentas, deudas y facturas. Y piensas:
+    </p>
+
+    <!-- Image with vignette blend into section bg -->
+    <div class="relative mt-10 sm:mt-14 -mx-5 sm:mx-auto sm:max-w-[680px] px-2 sm:px-0">
+      <img
+        src="a47981e7-3275-44de-8acc-03e04d4e83b5.png"
+        alt="Los pensamientos que no te dejan dormir"
+        class="w-full block"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="absolute inset-0 pointer-events-none" style="box-shadow: inset 0 60px 35px -20px #0A0A0A, inset 0 -30px 25px -15px #0A0A0A, inset 50px 0 35px -20px #0A0A0A, inset -50px 0 35px -20px #0A0A0A;"></div>
+    </div>
+
+    <!-- Closing truth statement -->
+    <h3 class="display text-white mt-14 sm:mt-16 max-w-[22ch] mx-auto" style="font-size: clamp(26px, 5.8vw, 42px); line-height: 1.15; letter-spacing: -0.035em;">
+      Pero la verdad es que organizar tus finanzas <span class="text-green">no tiene que ser complicado.</span>
+    </h3>
+
+  </div>
+</section>
+
+<!-- =========================================================
+  PAIN · one big statement
+========================================================= -->
+<section class="bg-surface border-y border-line">
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-8 py-24 sm:py-36 text-center">
+    <span class="t-kick text-red">la verdad incómoda</span>
+    <h2 class="display t-h2 mt-6 max-w-[20ch] mx-auto">
+      El problema nunca<br/>fue <span class="serif italic font-normal text-muted">cuánto</span> ganas.
+    </h2>
+    <p class="display t-h3 mt-6 text-muted max-w-[24ch] mx-auto">
+      Fue que nunca supiste<br/>
+      <span class="text-ink">a dónde se iba.</span>
+    </p>
+
+    <div class="mt-16 grid sm:grid-cols-2 gap-x-12 gap-y-6 text-left max-w-[740px] mx-auto t-body">
+      <div class="flex items-start gap-3">
+        <span class="text-red font-bold pt-1">—</span>
+        <p>Cobras el día 1 y para <strong class="text-ink">el día 15 ya no queda nada</strong>. Y no sabes por qué.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-red font-bold pt-1">—</span>
+        <p>Pagas solo el mínimo de la tarjeta cada mes. Y <strong class="text-ink">la deuda nunca — NUNCA — baja</strong>.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-red font-bold pt-1">—</span>
+        <p>Abres la app del banco con <strong class="text-ink">el estómago hecho nudo</strong>. Cierras rápido sin mirar los gastos.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-red font-bold pt-1">—</span>
+        <p>Si mañana pasa algo — se rompe el auto, el refri, lo que sea — <strong class="text-ink">no sabes de dónde vas a sacar</strong>.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-red font-bold pt-1">—</span>
+        <p>Frente a los demás actúas como si todo bien. Por dentro <strong class="text-ink">te sientes una idiota con la plata</strong>.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-red font-bold pt-1">—</span>
+        <p>Tu pareja y tú <strong class="text-ink">pelean por dinero cada fin de mes</strong>. Y sabes que por eso están raros.</p>
+      </div>
+    </div>
+
+    <p class="display t-h4 mt-16 max-w-[40ch] mx-auto">
+      Esto no es falta de disciplina.<br/>
+      <span class="text-muted">Es falta de ver.</span>
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================
+  VOICE COMMAND · bridge from pain to relief
+========================================================= -->
+<section class="bg-ink text-white border-y border-ink overflow-hidden">
+  <div class="max-w-[1000px] mx-auto px-5 sm:px-8 py-20 sm:py-28 text-center">
+
+    <span class="t-kick text-green">basta de pelearte con planillas</span>
+    <h2 class="display t-h2 mt-5 text-white max-w-[22ch] mx-auto">
+      Toda esa angustia se resuelve con <span class="text-green italic serif font-normal">un audio</span> de 3 segundos.
+    </h2>
+    <p class="mt-6 max-w-[52ch] mx-auto text-white/80" style="font-size: clamp(16px, 3.5vw, 19px); line-height: 1.55;">
+      Ya no peleas con apps, ni con fórmulas, ni te obligas a "acordarte" de anotar. <strong class="text-white">Solo grabas un audio</strong> — "gasté setenta en el mercado" — y la planilla hace el resto. Sola.
+    </p>
+
+    <!-- Video of Helena recording -->
+    <div class="mt-12 mb-12 flex justify-center">
+      <div class="relative max-w-[280px] w-full rounded-2xl overflow-hidden ring-2 ring-green/40 shadow-[0_20px_60px_-20px_rgba(16,185,129,0.5)]">
+        <video
+          src="Design%20sem%20nome%20%282%29.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+          preload="auto"
+          class="w-full block"
+          aria-label="Helena grabando un audio para registrar un gasto">
+        </video>
+        <div class="absolute top-3 left-3 bg-green text-ink text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-red animate-pulse"></span>
+          Grabando
+        </div>
+      </div>
+    </div>
+
+    <!-- Examples as pills -->
+    <p class="t-kick text-white/50 mb-5">Puedes decir cosas como:</p>
+    <div class="flex flex-wrap justify-center gap-2.5 sm:gap-3 max-w-[720px] mx-auto">
+      <span class="bg-white/5 border border-white/15 rounded-full px-4 py-2 text-[14px] sm:text-[15px] text-white/85 serif italic">
+        "gasté 70 en el mercado"
+      </span>
+      <span class="bg-white/5 border border-white/15 rounded-full px-4 py-2 text-[14px] sm:text-[15px] text-white/85 serif italic">
+        "me pagaron el sueldo"
+      </span>
+      <span class="bg-white/5 border border-white/15 rounded-full px-4 py-2 text-[14px] sm:text-[15px] text-white/85 serif italic">
+        "120 de gasolina"
+      </span>
+      <span class="bg-white/5 border border-white/15 rounded-full px-4 py-2 text-[14px] sm:text-[15px] text-white/85 serif italic">
+        "350 en la farmacia"
+      </span>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+  SECTION 1 · DASHBOARD
+========================================================= -->
+<section id="producto" class="border-b border-line">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-20 sm:py-28">
+
+    <div class="text-center max-w-[760px] mx-auto mb-14">
+      <span class="t-kick text-green">panel principal</span>
+      <h2 class="display t-h2 mt-4 max-w-[20ch] mx-auto">
+        Todo tu dinero, en <span class="serif italic font-normal">una pantalla</span>.
+      </h2>
+      <p class="mt-6 text-ink2 max-w-[56ch] mx-auto" style="font-size: clamp(16px, 3.5vw, 19px); line-height: 1.55;">
+        Abres la planilla y ves todo: saldo real, entradas, salidas, gastos por categoría y próximos pagos. <strong class="text-ink">Sin calcular nada, sin abrir diez apps, sin dolor de cabeza los domingos.</strong> En tres segundos ya sabes cómo estás este mes.
+      </p>
+    </div>
+
+    <!-- 3 phones showcasing full dashboard -->
+    <div class="flex justify-center items-end gap-1 sm:gap-3 max-w-[1100px] mx-auto">
+      <img src="ddf7f1bc-ad83-4569-a25c-0648b2b0fce9.png" alt="Saldo total y carta del domingo" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async"/>
+      <img src="da444664-8d6e-4c2d-8198-4f3b315ff292.png" alt="Tarjetas y próximas cuentas" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async"/>
+      <img src="f9af2857-0fab-49f0-bf3e-5dd7735dd3c6.png" alt="Gráfico circular de gastos y movimientos" class="w-1/3 max-w-[360px]" loading="lazy" decoding="async"/>
+    </div>
+
+    <!-- Features list · premium cards -->
+    <div class="mt-16 sm:mt-20 max-w-[1000px] mx-auto">
+      <p class="text-center t-kick text-green mb-10">Todo esto ves al abrir la planilla</p>
+
+      <div class="grid grid-cols-2 gap-3 sm:gap-5">
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Saldo total en tiempo real</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Cuánto tienes de verdad, ya descontando lo que viene este mes.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Entró / Salió / Te queda</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Resumen del mes en 3 cards grandes, imposible de no entender.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Carta del domingo</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Alerta semanal: "gastaste 41% más que la semana pasada, donde más se fue fue en súper".</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Tus tarjetas con límite</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Cada tarjeta con cuánto usaste y cuánto te queda de límite.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Próximas cuentas a pagar</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Renta, luz, seguro — ordenadas por fecha, sin riesgo de olvido.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Barra de control del mes</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">"Todo bajo control · 63% del mes" — sabes si estás bien o si ya te excediste.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Gráfico circular de gastos</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">100% de tus gastos separados por categoría, actualizados al instante.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Categorías automáticas</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Renta, súper, tarjeta, streaming — cada peso clasificado solo.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Últimos movimientos</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Los últimos ingresos y gastos con fecha y categoría, visibles al instante.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Navegación con un toque</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Inicio, Calendario, Mis gastos, Perfil — todo a un clic, sin aprender nada.</p>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  SECTION 2 · CALENDAR
+========================================================= -->
+<section class="border-b border-line bg-surface">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-20 sm:py-28">
+
+    <div class="text-center max-w-[760px] mx-auto mb-14">
+      <span class="t-kick text-green">calendario inteligente</span>
+      <h2 class="display t-h2 mt-4 max-w-[22ch] mx-auto">
+        Te avisa <span class="serif italic font-normal">antes</span> de que llegue la cuenta.
+      </h2>
+      <p class="mt-6 text-ink2 max-w-[56ch] mx-auto" style="font-size: clamp(16px, 3.5vw, 19px); line-height: 1.55;">
+        Todos tus vencimientos marcados en un calendario con colores. <strong class="text-ink">La planilla te notifica con días de anticipación</strong> — luz, renta, tarjeta, lo que sea. Se acabaron los recargos por olvido y el susto del banco.
+      </p>
+    </div>
+
+    <!-- 2 phones side by side -->
+    <div class="flex justify-center items-end gap-2 sm:gap-6 max-w-[1000px] mx-auto">
+      <img src="dafd3ff1-98fa-4caa-bd77-0538b371b8af.png" alt="Vista mensual del calendario con vencimientos" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async"/>
+      <img src="a73a45f7-1e33-48f0-876b-21d414f6f22a.png" alt="Detalle del día con aviso de pago próximo" class="w-1/2 max-w-[520px]" loading="lazy" decoding="async"/>
+    </div>
+
+    <!-- Features list · premium cards -->
+    <div class="mt-16 sm:mt-20 max-w-[1000px] mx-auto">
+      <p class="text-center t-kick text-green mb-10">Todo lo que el calendario hace por ti</p>
+
+      <div class="grid grid-cols-2 gap-3 sm:gap-5">
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Vista mensual completa</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">El mes entero frente a ti, con cada día marcado según lo que tiene.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Codificación por color</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Verde para ingresos, rojo para gastos, ámbar para vencimientos. Claro al instante.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Avisa antes de vencer</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Varios días antes de la fecha, no cuando el recargo ya entró en tu tarjeta.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Detalle con un toque</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Tocas el día 27 y aparece "CFE Luz · $480 · Vencimiento" — todo lo que hay ese día.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Navegación fluida entre meses</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Pasas al mes siguiente con una flecha. Planeas adelante, sin complicaciones.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Categoría visible de inmediato</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Cada pago con su icono: luz, renta, tarjeta, salud. Reconoces de qué se trata sin leer.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Estado de cada pago</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Vencimiento, pagado, atrasado — el estado visible en el mismo momento que miras el día.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Un solo lugar para todo</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Luz, renta, tarjeta, internet, seguro. Todo en el mismo calendario. Sin abrir 5 apps.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Agregas nuevos pagos rápido</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Con el botón + central: eliges fecha, valor y categoría en segundos.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl p-3.5 sm:p-6 border border-line hover:border-green/50 hover:shadow-[0_12px_32px_-12px_rgba(16,185,129,0.25)] transition-all duration-300 group">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-green to-greenHi grid place-items-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="min-w-0 sm:pt-0.5">
+              <h4 class="display font-bold text-[14px] sm:text-[18px] leading-tight">Se acabaron los recargos</h4>
+              <p class="text-[12px] sm:text-[14px] text-muted mt-1.5 sm:mt-2 leading-snug sm:leading-relaxed">Nunca más un pago olvidado, una multa del banco o un interés moratorio por descuido.</p>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  SECTION 3 · MULTI-DEVICE
+========================================================= -->
+<section class="border-b border-line">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-20 sm:py-28">
+
+    <div class="text-center max-w-[760px] mx-auto mb-14">
+      <span class="t-kick text-green">funciona en todo</span>
+      <h2 class="display t-h2 mt-4 max-w-[22ch] mx-auto">
+        Celular, iPad, laptop, <span class="serif italic font-normal">Mac</span>.
+      </h2>
+      <p class="mt-6 text-ink2 max-w-[56ch] mx-auto" style="font-size: clamp(16px, 3.5vw, 19px); line-height: 1.55;">
+        <strong class="text-ink">La misma planilla, en cualquier aparato que ya tengas.</strong> Revisas en el autobús desde el celular, cierras el mes en la laptop, le muestras a tu pareja en el iPad. Todo sincronizado al instante, sin instalar nada complicado.
+      </p>
+    </div>
+
+    <!-- iPad + Macbook side by side -->
+    <div class="flex justify-center items-end gap-2 sm:gap-8 max-w-[1280px] mx-auto">
+      <img src="5f90412b-d3cc-4ae7-9ae8-fa35bbf51c43.png" alt="Planilla Inteligente en iPad" class="w-[40%] max-w-[520px]" loading="lazy" decoding="async"/>
+      <img src="2efef129-c44a-46a7-b45f-8193b02895ef.png" alt="Planilla Inteligente en MacBook" class="w-[60%] max-w-[780px]" loading="lazy" decoding="async"/>
+    </div>
+
+    <!-- Benefits row -->
+    <div class="grid sm:grid-cols-3 gap-6 sm:gap-10 max-w-[900px] mx-auto mt-14 sm:mt-16 text-center">
+      <div>
+        <div class="display font-extrabold text-[18px]">iOS y Android</div>
+        <p class="text-[14px] text-muted mt-1.5 leading-snug">iPhone, Samsung, Xiaomi, Motorola — cualquier celular.</p>
+      </div>
+      <div>
+        <div class="display font-extrabold text-[18px]">Mac y Windows</div>
+        <p class="text-[14px] text-muted mt-1.5 leading-snug">Desde tu laptop, MacBook o computadora de escritorio.</p>
+      </div>
+      <div>
+        <div class="display font-extrabold text-[18px]">Tablet · iPad</div>
+        <p class="text-[14px] text-muted mt-1.5 leading-snug">Pantalla grande, ideal para revisar todo el mes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  METHOD · 3 steps (upgraded)
+========================================================= -->
+<section id="metodo" class="bg-surface border-b border-line relative overflow-hidden">
+  <!-- Decorative gradient -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-green/5 blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-24 sm:py-36">
+    <div class="text-center max-w-[760px] mx-auto mb-16 sm:mb-20">
+      <span class="t-kick text-green">cómo funciona</span>
+      <h2 class="display t-h2 mt-5">
+        Tres pasos.<br/>
+        <span class="serif italic font-normal text-muted">Quince minutos por semana.</span>
+      </h2>
+      <p class="mt-6 text-muted max-w-[50ch] mx-auto" style="font-size: clamp(15px, 3.2vw, 18px); line-height: 1.55;">
+        Empiezas hoy. En 7 días ya estás viendo tu dinero como nunca antes.
+      </p>
+    </div>
+
+    <!-- Steps with connecting line on desktop -->
+    <div class="relative max-w-[1100px] mx-auto">
+      <!-- Connecting dashed line (desktop only) -->
+      <div class="hidden md:block absolute top-[56px] left-[16.67%] right-[16.67%] h-0.5 border-t-2 border-dashed border-green/30 pointer-events-none"></div>
+
+      <div class="grid md:grid-cols-3 gap-6 md:gap-8 relative">
+
+        <!-- Step 1 -->
+        <article class="bg-white rounded-3xl p-7 sm:p-8 border border-line shadow-sm hover:shadow-lg transition-shadow relative">
+          <!-- Step number circle -->
+          <div class="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-green to-greenHi text-white grid place-items-center mx-auto mb-5 shadow-lg shadow-green/30">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="8" y="3" width="13" height="17" rx="2"/>
+              <path d="M5 7v14a2 2 0 0 0 2 2h11"/>
+            </svg>
+          </div>
+          <div class="text-center">
+            <div class="t-kick text-green mb-2">Paso 01 · 40 segundos</div>
+            <h3 class="display t-h4">Pegas tu estado</h3>
+            <p class="t-body text-muted mt-3 leading-relaxed">
+              Copias lo que te manda el banco. Lo pegas en la planilla. <strong class="text-ink">Ella categoriza sola.</strong>
+            </p>
+          </div>
+        </article>
+
+        <!-- Step 2 -->
+        <article class="bg-white rounded-3xl p-7 sm:p-8 border-2 border-green shadow-lg shadow-green/10 relative">
+          <!-- Step number circle (featured) -->
+          <div class="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-green to-greenHi text-white grid place-items-center mx-auto mb-5 shadow-lg shadow-green/30">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"/>
+              <path d="M7 14l4-4 4 4 5-5"/>
+            </svg>
+          </div>
+          <div class="text-center">
+            <div class="t-kick text-green mb-2">Paso 02 · 3 segundos</div>
+            <h3 class="display t-h4">Ves la radiografía</h3>
+            <p class="t-body text-muted mt-3 leading-relaxed">
+              Una pantalla con la verdad: <strong class="text-ink">cuánto entró, cuánto salió, qué categoría se está comiendo tu sueldo.</strong>
+            </p>
+          </div>
+          <!-- "Most powerful" badge -->
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">
+            El momento mágico
+          </div>
+        </article>
+
+        <!-- Step 3 -->
+        <article class="bg-white rounded-3xl p-7 sm:p-8 border border-line shadow-sm hover:shadow-lg transition-shadow relative">
+          <div class="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-green to-greenHi text-white grid place-items-center mx-auto mb-5 shadow-lg shadow-green/30">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="text-center">
+            <div class="t-kick text-green mb-2">Paso 03 · 5 min/semana</div>
+            <h3 class="display t-h4">Sigues el plan</h3>
+            <p class="t-body text-muted mt-3 leading-relaxed">
+              La planilla te dice <strong class="text-ink">qué cortar, cuánto mover al ahorro, qué pagar primero.</strong> Sin decidir a ciegas.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- Bottom result callout -->
+    <div class="mt-14 sm:mt-16 text-center max-w-[720px] mx-auto">
+      <div class="inline-flex items-center gap-3 bg-white border border-line rounded-full pl-2 pr-5 py-2 shadow-sm">
+        <div class="w-7 h-7 rounded-full bg-green grid place-items-center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <span class="text-[14px] font-semibold text-ink2">Resultado promedio: <strong class="text-green">US$ 380 ahorrados</strong> en el segundo mes.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================================================
+  HELENA · bio with portrait
+========================================================= -->
+<section id="reveal" class="border-b border-line">
+  <div class="max-w-[1100px] mx-auto px-5 sm:px-8 py-20 sm:py-32">
+
+    <div class="grid lg:grid-cols-[380px_1fr] gap-10 lg:gap-16 items-start">
+
+      <!-- Portrait of Helena -->
+      <div class="flex justify-center lg:justify-start">
+        <div class="relative max-w-[380px] w-full">
+          <div class="aspect-square overflow-hidden rounded-3xl shadow-[0_30px_60px_-20px_rgba(10,10,10,0.3)] ring-1 ring-line">
+            <img
+              src="roudakova.anna_669755033_18577090384058295_4019744744811644976_n.jpg"
+              alt="Helena Rodríguez presentando en conferencia"
+              class="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <!-- Floating badge -->
+          <div class="absolute -bottom-5 -right-3 sm:-right-5 bg-green text-ink rounded-2xl px-5 py-3 shadow-xl border-2 border-white">
+            <div class="text-[10px] font-black uppercase tracking-wider">Creado por</div>
+            <div class="display font-extrabold text-[17px] leading-tight -mt-0.5">Helena Rodríguez</div>
+            <div class="text-[11px] font-semibold opacity-85 leading-tight">Ex analista · 12 años en finanzas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text content -->
+      <div class="lg:pt-2">
+        <span class="t-kick text-muted">quién la creó</span>
+        <h2 class="display t-h2 mt-5 max-w-[20ch]">
+          12 años dentro de bancos viendo <span class="serif italic font-normal">lo mismo</span>.
+        </h2>
+        <div class="mt-8 space-y-5 t-lead text-ink2">
+          <p>
+            Soy Helena Rodríguez. Pasé 12 años analizando presupuestos dentro de bancos. Vi la misma escena miles de veces: familias con buenos sueldos que llegaban a fin de mes en cero.
+          </p>
+          <p>
+            Al principio creía que era la plata. Después entendí que no: era que nadie les había enseñado a <strong class="text-ink">ver su propio dinero cada semana</strong>. Y esa diferencia lo es todo.
+          </p>
+          <p>
+            En 2019 empecé a compartir esta planilla con 40 clientas. Hoy hay <strong class="text-ink">42.000 familias en 14 países</strong> usándola. Y la sigo mejorando cada mes.
+          </p>
+        </div>
+
+        <!-- Credibility stats -->
+        <div class="mt-10 grid grid-cols-3 gap-4 max-w-[480px] pt-8 border-t border-line">
+          <div>
+            <div class="display font-extrabold text-[28px] text-green leading-none">12</div>
+            <div class="text-[12px] text-muted font-semibold mt-2 leading-tight">años en finanzas</div>
+          </div>
+          <div>
+            <div class="display font-extrabold text-[28px] text-green leading-none">42k</div>
+            <div class="text-[12px] text-muted font-semibold mt-2 leading-tight">familias ordenadas</div>
+          </div>
+          <div>
+            <div class="display font-extrabold text-[28px] text-green leading-none">14</div>
+            <div class="text-[12px] text-muted font-semibold mt-2 leading-tight">países hispanos</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Authority banner — conference photo -->
+    <div class="mt-20 sm:mt-24 bg-ink text-white rounded-3xl p-6 sm:p-10 grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-12 items-center relative overflow-hidden">
+      <!-- Conference image -->
+      <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+        <img src="893d137c-4202-47f3-bdd7-4eff8cf4e86c.png" alt="Helena presentando la Plantilla de Control Financiero en conferencia ante más de 400 personas" class="w-full block" loading="lazy" decoding="async"/>
+        <!-- Live badge -->
+        <div class="absolute top-3 left-3 bg-red text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-white animate-dot"></span>
+          En vivo
+        </div>
+      </div>
+
+      <!-- Authority text -->
+      <div>
+        <div class="inline-flex items-center gap-2 bg-green/15 border border-green/30 rounded-full px-3 py-1.5 mb-4">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M12 2a10 10 0 0 0-10 10c0 5.52 4.48 10 10 10s10-4.48 10-10a10 10 0 0 0-10-10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span class="text-[11px] font-black text-green uppercase tracking-wider">Autoridad comprobada</span>
+        </div>
+        <h3 class="display font-extrabold text-white leading-[1.05]" style="font-size: clamp(22px, 4.2vw, 32px); letter-spacing: -0.03em;">
+          Presenta su método en <span class="serif italic font-normal text-green">conferencias</span> por todo el mundo hispano.
+        </h3>
+        <p class="mt-5 text-white/75 text-[14px] sm:text-[16px] leading-relaxed max-w-[46ch]">
+          Las <strong class="text-green">42.000 personas en 14 países</strong> aplican el método que Helena comparte en conferencias, medios y universidades — el mismo que tú vas a recibir hoy.
+        </p>
+        <div class="mt-5 flex items-center gap-4 flex-wrap text-[12px] text-white/60">
+          <span class="flex items-center gap-1.5"><span class="text-green">★★★★★</span> 4,9/5</span>
+          <span>·</span>
+          <span>2.188 reseñas</span>
+          <span>·</span>
+          <span>14 países</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+  TESTIMONIALS · visual cards with avatars
+========================================================= -->
+<section class="bg-surface border-b border-line">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-24 sm:py-32">
+    <div class="text-center mb-16 sm:mb-20">
+      <span class="t-kick text-green">historias reales</span>
+      <h2 class="display t-h2 mt-5 max-w-[20ch] mx-auto">
+        "Ya no tengo miedo<br/>
+        de abrir mi <span class="serif italic font-normal">cuenta</span>."
+      </h2>
+      <div class="mt-8 inline-flex items-center gap-4 bg-white rounded-full border border-line px-5 py-3 shadow-sm">
+        <div class="text-green text-lg">★★★★★</div>
+        <div class="text-left leading-tight">
+          <div class="display font-extrabold text-[17px]">4,9/5</div>
+          <div class="text-[11px] text-muted font-semibold">2.188 reseñas verificadas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5 sm:gap-6 max-w-[1100px] mx-auto">
+
+      <!-- Testimonial 1 -->
+      <figure class="bg-white rounded-3xl p-6 sm:p-7 border border-line shadow-sm hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
+              <img src="https://i.pravatar.cc/120?img=47" alt="Carolina Muñoz" class="w-full h-full object-cover" loading="lazy"/>
+            </div>
+            <div>
+              <div class="display font-bold text-[16px] leading-tight">Carolina Muñoz</div>
+              <div class="text-[12px] text-muted flex items-center gap-1.5 mt-0.5">
+                <span>🇨🇴</span>
+                <span>Fisioterapeuta · Bogotá</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-green text-[13px]">★★★★★</div>
+        </div>
+        <blockquote class="t-body text-ink2 leading-relaxed">
+          "Al día 15 del mes ya no quedaba nada. <strong class="text-ink">Cada vez que abría el banco sentía vergüenza</strong>. Con esta planilla salí del sobregiro en 40 días y hoy tengo <strong class="text-green">US$ 520 ahorrados</strong>. Lo mejor: dejé de sentirme estúpida con la plata."
+        </blockquote>
+        <div class="mt-4 pt-4 border-t border-line flex items-center gap-2 text-[11px] text-muted">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Compra verificada · Hace 2 meses</span>
+        </div>
+      </figure>
+
+      <!-- Testimonial 2 -->
+      <figure class="bg-white rounded-3xl p-6 sm:p-7 border border-line shadow-sm hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
+              <img src="download%20%282%29.jpg" alt="Rafael Alarcón" class="w-full h-full object-cover" loading="lazy"/>
+            </div>
+            <div>
+              <div class="display font-bold text-[16px] leading-tight">Rafael Alarcón</div>
+              <div class="text-[12px] text-muted flex items-center gap-1.5 mt-0.5">
+                <span>🇲🇽</span>
+                <span>Conductor Uber · CDMX</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-green text-[13px]">★★★★★</div>
+        </div>
+        <blockquote class="t-body text-ink2 leading-relaxed">
+          "Una semana cobro bien, la siguiente casi nada. Así no hay planilla que sirva — o creí. Esta la lleno con un audio después del último viaje. <strong class="text-green">En 3 meses pagué el enganche de la moto nueva</strong> sin sentir que me ahorcaba."
+        </blockquote>
+        <div class="mt-4 pt-4 border-t border-line flex items-center gap-2 text-[11px] text-muted">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Compra verificada · Hace 5 meses</span>
+        </div>
+      </figure>
+
+      <!-- Testimonial 3 -->
+      <figure class="bg-white rounded-3xl p-6 sm:p-7 border border-line shadow-sm hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
+              <img src="download%20%2826%29.jpg" alt="Julia Palacios" class="w-full h-full object-cover" loading="lazy"/>
+            </div>
+            <div>
+              <div class="display font-bold text-[16px] leading-tight">Julia Palacios</div>
+              <div class="text-[12px] text-muted flex items-center gap-1.5 mt-0.5">
+                <span>🇵🇪</span>
+                <span>Dentista · Lima</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-green text-[13px]">★★★★★</div>
+        </div>
+        <blockquote class="t-body text-ink2 leading-relaxed">
+          "Pagaba solo el mínimo cada mes y <strong class="text-ink">la deuda nunca bajaba</strong>. Cuatro tarjetas, atrapada para siempre. El plan me dijo cuál liquidar primero (no era la que yo pensaba). <strong class="text-green">Me ahorré US$ 940 en intereses</strong> en el primer trimestre."
+        </blockquote>
+        <div class="mt-4 pt-4 border-t border-line flex items-center gap-2 text-[11px] text-muted">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Compra verificada · Hace 4 meses</span>
+        </div>
+      </figure>
+
+      <!-- Testimonial 4 - Couple -->
+      <figure class="bg-white rounded-3xl p-6 sm:p-7 border border-line shadow-sm hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
+              <img src="Comente%20CASAL%20para%20receber%20os%20Prompts%20%F0%9F%8E%81.jpg" alt="Lucía y Santiago — pareja" class="w-full h-full object-cover" loading="lazy"/>
+            </div>
+            <div>
+              <div class="display font-bold text-[16px] leading-tight">Lucía y Santiago</div>
+              <div class="text-[12px] text-muted flex items-center gap-1.5 mt-0.5">
+                <span>🇦🇷</span>
+                <span>Pareja · Buenos Aires</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-green text-[13px]">★★★★★</div>
+        </div>
+        <blockquote class="t-body text-ink2 leading-relaxed">
+          "Peleábamos toda fin de mes por plata. <strong class="text-ink">7 años así</strong>. Ahora miramos los números juntos los sábados con un café. <strong class="text-green">Primera vez en 8 meses que no peleamos por dinero</strong>. Y ya pagamos una tarjeta ❤️."
+        </blockquote>
+        <div class="mt-4 pt-4 border-t border-line flex items-center gap-2 text-[11px] text-muted">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Compra verificada · Hace 3 meses</span>
+        </div>
+      </figure>
+
+      <!-- Testimonial 5 -->
+      <figure class="bg-white rounded-3xl p-6 sm:p-7 border border-line shadow-sm hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
+              <img src="https://i.pravatar.cc/120?img=11" alt="Marcos Villalba" class="w-full h-full object-cover" loading="lazy"/>
+            </div>
+            <div>
+              <div class="display font-bold text-[16px] leading-tight">Marcos Villalba</div>
+              <div class="text-[12px] text-muted flex items-center gap-1.5 mt-0.5">
+                <span>🇪🇸</span>
+                <span>Ingeniero · Madrid</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-green text-[13px]">★★★★★</div>
+        </div>
+        <blockquote class="t-body text-ink2 leading-relaxed">
+          "Soy ingeniero, compré con poca fe — pensaba que era 'otra planilla más'. Me equivoqué. <strong class="text-green">La proyección a 12 meses es la más precisa que he visto</strong>. Y la carta del domingo me cambió el fin de semana: ahora sé exactamente qué ajustar cada 7 días."
+        </blockquote>
+        <div class="mt-4 pt-4 border-t border-line flex items-center gap-2 text-[11px] text-muted">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Compra verificada · Hace 1 mes</span>
+        </div>
+      </figure>
+
+      <!-- Testimonial 6 — honest 4-star -->
+      <figure class="bg-white rounded-3xl p-6 sm:p-7 border border-green/30 shadow-sm hover:shadow-lg transition-shadow relative">
+        <div class="absolute -top-3 right-6 bg-green text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
+          Reseña honesta
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden shadow-md ring-2 ring-green/20 shrink-0">
+              <img src="https://i.pravatar.cc/120?img=68" alt="Juan Vargas" class="w-full h-full object-cover" loading="lazy"/>
+            </div>
+            <div>
+              <div class="display font-bold text-[16px] leading-tight">Juan Vargas</div>
+              <div class="text-[12px] text-muted flex items-center gap-1.5 mt-0.5">
+                <span>🇪🇨</span>
+                <span>Vendedor · Guayaquil</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-green text-[13px]">★★★★<span class="text-line">★</span></div>
+        </div>
+        <blockquote class="t-body text-ink2 leading-relaxed">
+          "Voy a ser honesto: el primer fin de semana casi abandono. <strong class="text-ink">Me dio vergüenza ver US$ 280 en delivery en 2 semanas</strong>. Pero aguanté. <strong class="text-green">Tres meses después: US$ 340 ahorrados</strong> y dos tarjetas liquidadas. La incomodidad del primer día valió cada segundo."
+        </blockquote>
+        <div class="mt-4 pt-4 border-t border-line flex items-center gap-2 text-[11px] text-muted">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Compra verificada · Hace 3 meses</span>
+        </div>
+      </figure>
+
+    </div>
+
+    <!-- Closing stats -->
+    <div class="mt-16 sm:mt-20 pt-12 border-t border-line">
+      <div class="grid grid-cols-3 gap-4 sm:gap-8 max-w-[800px] mx-auto text-center">
+        <div>
+          <div class="display text-[32px] sm:text-[48px] font-black text-green leading-none">4,9<span class="text-[20px] sm:text-[28px]">★</span></div>
+          <div class="mt-2 text-[11px] sm:text-[13px] text-muted font-semibold uppercase tracking-wider">Promedio</div>
+        </div>
+        <div>
+          <div class="display text-[32px] sm:text-[48px] font-black text-green leading-none">2.188</div>
+          <div class="mt-2 text-[11px] sm:text-[13px] text-muted font-semibold uppercase tracking-wider">Reseñas</div>
+        </div>
+        <div>
+          <div class="display text-[32px] sm:text-[48px] font-black text-green leading-none">42k+</div>
+          <div class="mt-2 text-[11px] sm:text-[13px] text-muted font-semibold uppercase tracking-wider">Familias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  PRICING · redesigned
+========================================================= -->
+<section id="precio" class="border-b border-line bg-surface relative overflow-hidden">
+  <!-- Decorative elements -->
+  <div class="absolute top-20 right-10 w-96 h-96 rounded-full bg-green/5 blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-20 left-10 w-80 h-80 rounded-full bg-green/5 blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-20 sm:py-28">
+
+    <!-- Promo date badge -->
+    <div class="flex justify-center mb-6">
+      <div class="inline-flex items-center gap-2 bg-green/10 border border-green/30 rounded-full px-4 py-2">
+        <span class="w-2 h-2 rounded-full bg-green animate-dot"></span>
+        <span class="text-[13px] font-bold text-greenHi">Oferta exclusiva · Solo hoy, <span class="js-today-date">23 de abril</span></span>
+      </div>
+    </div>
+
+    <div class="text-center mb-14">
+      <span class="t-kick text-green">precio y acceso</span>
+      <h2 class="display t-h2 mt-4 max-w-[20ch] mx-auto">
+        Menos de lo que<br/>
+        cuesta un <span class="serif italic font-normal">almuerzo</span>.
+      </h2>
+      <p class="mt-5 text-muted max-w-[50ch] mx-auto" style="font-size: clamp(15px, 3.2vw, 17px); line-height: 1.55;">
+        Por el precio de 2 cafés de Starbucks, tienes <strong class="text-ink">todo esto</strong>:
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-[1fr_440px] gap-10 lg:gap-14 items-start max-w-[1100px] mx-auto">
+
+      <!-- What's included -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-line shadow-sm">
+        <div class="t-kick text-green mb-6">Esto entra en tu compra</div>
+        <div class="space-y-5">
+
+          <!-- Item 1 -->
+          <article class="flex gap-4 items-start pb-5 border-b border-line">
+            <div class="w-10 h-10 rounded-xl bg-green/10 grid place-items-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <h3 class="display font-extrabold text-[16px] sm:text-[17px] leading-tight">La Planilla Inteligente completa</h3>
+                <span class="text-[12px] text-muted line-through shrink-0">US$ 47</span>
+              </div>
+              <p class="text-[13px] text-muted mt-1.5 leading-snug">Archivo listo, con 18+ funciones. Google Sheets y Excel.</p>
+            </div>
+          </article>
+
+          <!-- Item 2 -->
+          <article class="flex gap-4 items-start pb-5 border-b border-line">
+            <div class="w-10 h-10 rounded-xl bg-green/10 grid place-items-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <h3 class="display font-extrabold text-[16px] sm:text-[17px] leading-tight">Método 7 Días en Verde</h3>
+                <span class="text-[12px] text-muted line-through shrink-0">US$ 27</span>
+              </div>
+              <p class="text-[13px] text-muted mt-1.5 leading-snug">Siete videos con Helena guiándote paso a paso.</p>
+            </div>
+          </article>
+
+          <!-- Item 3 -->
+          <article class="flex gap-4 items-start pb-5 border-b border-line">
+            <div class="w-10 h-10 rounded-xl bg-green/10 grid place-items-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <h3 class="display font-extrabold text-[16px] sm:text-[17px] leading-tight">Plan para salir de deudas</h3>
+                <span class="text-[12px] text-muted line-through shrink-0">US$ 19</span>
+              </div>
+              <p class="text-[13px] text-muted mt-1.5 leading-snug">Simulador que calcula qué deuda liquidar primero.</p>
+            </div>
+          </article>
+
+          <!-- Item 4 -->
+          <article class="flex gap-4 items-start pb-5 border-b border-line">
+            <div class="w-10 h-10 rounded-xl bg-green/10 grid place-items-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 5c0 1.66 4 3 9 3s9-1.34 9-3-4-3-9-3-9 1.34-9 3"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <h3 class="display font-extrabold text-[16px] sm:text-[17px] leading-tight">Registro por voz</h3>
+                <span class="bg-green text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">Nuevo</span>
+              </div>
+              <p class="text-[13px] text-muted mt-1.5 leading-snug">Mandas un audio y la planilla lo registra sola.</p>
+            </div>
+          </article>
+
+          <!-- Item 5 -->
+          <article class="flex gap-4 items-start pb-5 border-b border-line">
+            <div class="w-10 h-10 rounded-xl bg-green/10 grid place-items-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <h3 class="display font-extrabold text-[16px] sm:text-[17px] leading-tight">Actualizaciones para siempre</h3>
+                <span class="text-[12px] text-green font-bold shrink-0">Incluido</span>
+              </div>
+              <p class="text-[13px] text-muted mt-1.5 leading-snug">Cada versión nueva te llega gratis. Nunca pagas más.</p>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- EXCLUSIVE BONUSES section -->
+        <div class="mt-8 pt-8 border-t-2 border-dashed border-line">
+          <div class="flex items-center gap-2 mb-5">
+            <span class="bg-red text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Solo hoy</span>
+            <span class="t-kick text-red">bonos exclusivos de lanzamiento</span>
+          </div>
+
+          <!-- Bonus 1 — WhatsApp live (first 20) -->
+          <article class="flex gap-4 items-start bg-green/5 -mx-2 px-6 py-5 rounded-2xl border border-green/30 relative mb-4">
+            <div class="absolute -top-3 left-5 bg-green text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Solo primeras 20 personas</div>
+            <div class="w-11 h-11 rounded-xl bg-green grid place-items-center shrink-0 shadow-md">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </div>
+            <div class="flex-1 min-w-0 pt-1.5">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <h3 class="display font-extrabold text-[16px] sm:text-[17px] leading-tight">Mensajes en vivo con Helena</h3>
+                <span class="text-[12px] text-muted line-through shrink-0">US$ 97</span>
+              </div>
+              <p class="text-[13px] text-muted mt-1.5 leading-snug">Acceso directo al WhatsApp personal de Helena. Respondes cualquier duda, cuando quieras. <strong class="text-ink">Limitado a las primeras 20 personas</strong> que entran hoy.</p>
+            </div>
+          </article>
+
+          <!-- Bonus 2 — iPhone + Madrid trip giveaway (first 200) -->
+          <article class="bg-gradient-to-br from-ink to-ink2 text-white rounded-2xl border-2 border-green relative overflow-hidden">
+            <!-- Decorative glow -->
+            <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-green/20 blur-2xl pointer-events-none"></div>
+
+            <div class="relative p-6">
+              <!-- Badge inside card -->
+              <div class="inline-flex items-center gap-1.5 bg-gradient-to-r from-green to-greenHi text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg mb-5">
+                <span>🎁</span>
+                <span>Doble Sorteo Exclusivo</span>
+              </div>
+
+              <div class="flex gap-4 items-start">
+                <div class="w-11 h-11 rounded-xl bg-green grid place-items-center shrink-0 shadow-md">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3"><path d="M12 2a10 10 0 0 1 10 10c0 5-10 10-10 10S2 17 2 12a10 10 0 0 1 10-10z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div class="flex-1 min-w-0 pt-1.5">
+                  <div class="flex items-start justify-between gap-3 flex-wrap">
+                    <h3 class="display font-extrabold text-[16px] sm:text-[18px] leading-tight text-white">Doble sorteo para las primeras 200</h3>
+                    <span class="text-[12px] text-green font-bold shrink-0 whitespace-nowrap">US$ 3.500+</span>
+                  </div>
+                  <p class="text-[13px] text-white/75 mt-2 leading-snug">Si estás entre las <strong class="text-green">primeras 200 personas</strong> que compran hoy, ya estás concursando. <strong class="text-white">Sin hacer nada, sin formularios, sin pasos extras</strong> — el sistema te inscribe solo.</p>
+                </div>
+              </div>
+
+              <!-- Prize items -->
+              <div class="mt-5 grid sm:grid-cols-2 gap-3">
+                <!-- iPhone prize -->
+                <div class="bg-white/5 border border-white/15 rounded-xl p-4 flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-green/20 grid place-items-center shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.3"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="display font-extrabold text-[14px] text-white leading-tight">iPhone 17 Pro</div>
+                    <div class="text-[11px] text-white/60 mt-1">Valor US$ 1.200</div>
+                  </div>
+                </div>
+                <!-- Madrid trip prize -->
+                <div class="bg-green/15 border border-green/40 rounded-xl p-4 flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-green/30 grid place-items-center shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.3"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <div class="display font-extrabold text-[14px] text-white leading-tight">Viaje a Madrid</div>
+                      <span class="bg-green text-ink text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">Nuevo</span>
+                    </div>
+                    <div class="text-[11px] text-green mt-1 leading-snug">Pasajes + hospedaje · Conferencia de Helena (agosto)</div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-[11px] text-white/50 mt-4">Sorteo en vivo por Instagram el 15 de mayo.</p>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Total value -->
+        <div class="mt-8 pt-6 border-t-2 border-dashed border-line flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <span class="text-[13px] text-muted font-semibold">Valor total real:</span>
+            <div class="text-[13px] text-muted line-through mt-1">US$ 1.437</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[11px] text-green font-black uppercase tracking-wider">Tú pagas solo hoy</div>
+            <div class="display font-black text-[28px] text-green leading-none">US$ 19,90</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price box (right column, sticky) -->
+      <div class="lg:sticky lg:top-24">
+        <div class="bg-ink text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-green/20 relative overflow-hidden">
+          <!-- Glow effect -->
+          <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-green/20 blur-3xl pointer-events-none"></div>
+
+          <div class="relative">
+            <!-- Discount badge -->
+            <div class="flex items-center justify-between mb-3">
+              <span class="t-kick text-green">Precio de hoy</span>
+              <span class="bg-red text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">-86%</span>
+            </div>
+
+            <!-- Anchor price -->
+            <div class="text-[13px] text-white/50 line-through mb-1">De US$ 140</div>
+
+            <!-- Main price -->
+            <div class="display leading-none flex items-baseline gap-0.5" style="font-weight: 900; letter-spacing: -0.05em;">
+              <span class="text-green" style="font-size: clamp(48px, 14vw, 88px);">$</span>
+              <span style="font-size: clamp(64px, 18vw, 120px);">19</span>
+              <span class="text-white/70" style="font-size: clamp(26px, 7vw, 44px);">,90</span>
+            </div>
+            <div class="text-white/60 mt-2 text-[14px]">Pago único. Sin mensualidad. <strong class="text-green">Nunca.</strong></div>
+
+            <!-- Timer only -->
+            <div class="mt-6 pt-6 border-t border-white/10">
+              <div class="text-[12px] text-white/60 flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Oferta cierra en <span id="timer" class="text-green font-bold ml-1">—</span>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <a href="#checkout" class="mt-6 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green to-greenHi text-white py-4 rounded-xl display font-extrabold text-[16px] sm:text-[17px] hover:opacity-90 transition tap-52 shadow-lg shadow-green/30">
+              <span>Sí, quiero por US$ 19,90</span>
+              <span class="text-lg">→</span>
+            </a>
+
+            <!-- Trust points -->
+            <ul class="mt-6 space-y-2.5 text-[13px] text-white/85">
+              <li class="flex items-center gap-2"><span class="text-green text-base">✓</span> Acceso en 2 minutos al correo</li>
+              <li class="flex items-center gap-2"><span class="text-green text-base">✓</span> 7 días de garantía total</li>
+              <li class="flex items-center gap-2"><span class="text-green text-base">✓</span> Pago seguro con Stripe o PayPal</li>
+              <li class="flex items-center gap-2"><span class="text-green text-base">✓</span> Sin mensualidad · Nunca</li>
+            </ul>
+
+            <!-- Payment icons -->
+            <div class="mt-6 pt-5 border-t border-white/10 flex items-center justify-center gap-3 flex-wrap text-[11px] font-bold text-white/50">
+              <span class="bg-white/5 border border-white/10 rounded px-2 py-1">VISA</span>
+              <span class="bg-white/5 border border-white/10 rounded px-2 py-1">MC</span>
+              <span class="bg-white/5 border border-white/10 rounded px-2 py-1">PP</span>
+              <span class="bg-white/5 border border-white/10 rounded px-2 py-1">AMEX</span>
+              <span class="bg-white/5 border border-white/10 rounded px-2 py-1">PIX</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-4 text-[12px] text-muted text-center flex items-center justify-center gap-1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Compra 100% protegida · SSL 256 bits
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  GUARANTEE
+========================================================= -->
+<section class="border-b border-line bg-surface">
+  <div class="max-w-[900px] mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center">
+    <span class="t-kick text-green">garantía</span>
+    <h2 class="display t-h2 mt-5 max-w-[18ch] mx-auto">
+      El riesgo es<br/>
+      <span class="serif italic font-normal">mío</span>, no tuyo.
+    </h2>
+    <p class="t-lead mt-8 text-muted max-w-[55ch] mx-auto">
+      Pruebas la planilla 7 días. Pegas tu estado. Haces el diagnóstico. Si no te sirvió — y no tienes que explicar por qué — respondes el correo y te devuelvo <strong class="text-ink">el 100%</strong>.
+    </p>
+    <p class="t-body mt-6 text-muted max-w-[55ch] mx-auto">
+      Aunque pidas el reembolso, te mando de regalo el PDF del libro que me sacó del rojo cuando tenía 23. <strong class="text-ink">No te vas con las manos vacías.</strong> Decidas lo que decidas.
+    </p>
+    <p class="mt-8 text-[13px] text-muted italic">— Helena Rodríguez</p>
+  </div>
+</section>
+
+<!-- =========================================================
+  FAQ · redesigned with cards
+========================================================= -->
+<section id="dudas" class="border-b border-line bg-surface">
+  <div class="max-w-[900px] mx-auto px-5 sm:px-8 py-24 sm:py-32">
+    <div class="text-center mb-14 sm:mb-16">
+      <span class="t-kick text-green">antes de decidir</span>
+      <h2 class="display t-h2 mt-5">
+        Preguntas <span class="serif italic font-normal">honestas</span>.
+      </h2>
+      <p class="mt-5 text-muted max-w-[50ch] mx-auto" style="font-size: clamp(15px, 3.2vw, 17px); line-height: 1.55;">
+        Las dudas más comunes antes de empezar — respondidas sin vueltas.
+      </p>
+    </div>
+
+    <div class="space-y-3">
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">No entiendo nada de Excel. ¿Voy a poder?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Sí. La planilla fue pensada para alguien que nunca tocó un Excel. Pegas, ella hace el resto. Si algo no entiendes, hay un video corto que lo explica y el WhatsApp conmigo los miércoles.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿Me van a cobrar cada mes?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">No. Pagas <strong class="text-ink">US$ 19,90 una sola vez</strong>. Es tuya. Las versiones nuevas te llegan sin costo. Nunca más pagas nada.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">Tengo deudas. ¿Me sirve igual?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Te sirve aún más. Para eso existe el bono del plan de pago. Te dice qué deuda atacar primero por tasa real. <strong class="text-ink">La mayoría ahorra más de US$ 300 en intereses</strong> en el primer trimestre.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿Cuánto tardo en recibirla?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Dos minutos después del pago te llega el correo con acceso. Si tarda más de cinco, me escribes y lo resolvemos ese mismo día.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M3 3h18v18H3z"/><path d="M8 12h8M12 8v8"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">Ya abandoné 3 planillas antes. ¿Qué asegura que no pase lo mismo?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Por eso existen los <strong class="text-ink">7 días de garantía</strong> y el WhatsApp del miércoles. Una planilla sola no resuelve. Planilla + plan + acompañamiento + registro por voz sí. Es por eso que esta es distinta.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿Funciona con mi moneda local?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Peso mexicano, colombiano, argentino, chileno, euro, sol peruano, quetzal. Cualquiera. Se cambia con un clic. Hoy hay alumnos en 14 países hispanohablantes usándola.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿Mis datos bancarios están seguros?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">La planilla vive en tu propia cuenta de Google Sheets o Excel. <strong class="text-ink">Nada pasa por servidores míos.</strong> A diferencia de las apps que conectan tu banco y revenden tu información, aquí todo queda contigo.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿El registro por voz realmente funciona?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Sí. Grabas un audio como "gasté 70 en el mercado" y la planilla detecta el valor, la categoría y la fecha automáticamente. Reconoce cualquier acento hispano — mexicano, argentino, colombiano, chileno, español.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿Cómo funciona el doble sorteo (iPhone + viaje a Madrid)?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <div class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch] space-y-3">
+          <p>Si estás entre las <strong class="text-ink">primeras 200 personas</strong> que compran hoy, <strong class="text-ink">automáticamente ya estás concursando</strong>. No tienes que hacer nada extra — ni formularios, ni compartir, ni comentar. El sistema te inscribe solo apenas se confirma el pago.</p>
+          <p>Son <strong class="text-ink">2 premios</strong> que se sortean en vivo por Instagram el 15 de mayo:</p>
+          <ul class="space-y-2 pl-4">
+            <li class="flex items-start gap-2"><span class="text-green font-bold">·</span> <span><strong class="text-ink">iPhone 17 Pro</strong> nuevo, enviado donde estés en LATAM o España</span></li>
+            <li class="flex items-start gap-2"><span class="text-green font-bold">·</span> <span><strong class="text-ink">Viaje completo a Madrid</strong> (pasajes + hospedaje) para asistir en persona a la conferencia de Helena en agosto</span></li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿De verdad Helena me responde por WhatsApp?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Sí — pero solo para las <strong class="text-ink">primeras 20 personas</strong> que entran hoy. Es acceso directo al WhatsApp personal de Helena. Ella responde dudas, revisa tu planilla si pides, y te guía en momentos difíciles. Después de las primeras 20, pasas al grupo general del miércoles.</p>
+      </details>
+
+      <details class="group bg-white rounded-2xl border border-line hover:border-green/40 transition-colors overflow-hidden">
+        <summary class="flex justify-between items-start gap-4 cursor-pointer list-none p-5 sm:p-6 tap-52">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-9 h-9 rounded-lg bg-green/10 grid place-items-center shrink-0 mt-0.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <span class="display font-bold text-[15px] sm:text-[17px] leading-tight flex-1 pt-1.5">¿Y si no me convence?</span>
+          </div>
+          <span class="w-8 h-8 rounded-full bg-green/10 text-green grid place-items-center font-black text-lg shrink-0 group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <p class="t-body text-muted px-5 sm:px-6 pb-6 pl-[72px] sm:pl-[76px] -mt-2 max-w-[65ch]">Tienes <strong class="text-ink">7 días para pedir reembolso completo</strong>. Respondes el correo, listo. Sin preguntas, sin formularios. Y te quedas con el libro de regalo igual.</p>
+      </details>
+
+    </div>
+
+    <!-- Contact note -->
+    <div class="mt-10 p-6 sm:p-8 bg-white rounded-2xl border border-line text-center">
+      <p class="display font-bold text-[17px]">¿Otra duda que no está acá?</p>
+      <p class="t-body text-muted mt-2">Escríbeme a <a href="mailto:hola@planillainteligente.com" class="text-green font-bold underline">hola@planillainteligente.com</a> y te respondo en menos de 24 horas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  FINAL CTA
+========================================================= -->
+<section class="bg-ink text-white">
+  <div class="max-w-[900px] mx-auto px-5 sm:px-8 py-28 sm:py-40 text-center">
+    <h2 class="display t-h2 max-w-[18ch] mx-auto text-white">
+      Tu dinero va a estar<br/>
+      en algún lado dentro de<br/>
+      <span class="serif italic font-normal text-green">30 días</span>.
+    </h2>
+    <p class="t-lead mt-8 text-white/70 max-w-[50ch] mx-auto">
+      La única pregunta real es si vas a saber dónde. O si pasas otro mes preguntándote lo mismo.
+    </p>
+    <a href="#precio" class="btn mt-12 bg-green text-ink hover:bg-greenHi hover:text-white tap-52">
+      <span>Quiero la planilla por US$ 19,90</span>
+      <span>→</span>
+    </a>
+    <div class="mt-5 text-[13px] text-white/50">
+      Acceso inmediato · 7 días de garantía · Sin mensualidad
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+  P.S. FROM HELENA
+========================================================= -->
+<section class="border-b border-line">
+  <div class="max-w-[760px] mx-auto px-5 sm:px-8 py-24 sm:py-32">
+    <div class="t-kick text-muted mb-6">P.D. de Helena</div>
+    <div class="space-y-5 t-body">
+      <p>Si llegaste hasta acá, parte de ti ya decidió. La otra parte tiene miedo. Es normal.</p>
+      <p>Podría cobrar US$ 97 por esto. La competencia cobra más, por menos. Elegí US$ 19,90 por una razón simple: cuando yo tenía 23 y estaba quebrada, cien dólares era una fortuna. Un libro de cinco dólares me cambió la vida.</p>
+      <p>Este precio es para que quepa en el bolsillo de quien más lo necesita. Si ahora no te alcanza, está bien. Vuelve cuando sí.</p>
+      <p class="display t-h4 mt-6">Nadie te enseñó esto. No es tu culpa.<br/><span class="text-muted">Pero arreglarlo sí depende de ti.</span></p>
+      <p class="mt-6 serif text-[22px] italic">— Helena</p>
+    </div>
+    <a href="#precio" class="btn btn-primary mt-10 tap-52">
+      <span>Empezar por US$ 19,90</span>
+      <span>→</span>
+    </a>
+  </div>
+</section>
+
+<!-- =========================================================
+  FOOTER
+========================================================= -->
+<footer class="bg-white">
+  <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-10 grid sm:grid-cols-3 gap-8 items-start">
+    <div>
+      <div class="display text-[18px] tracking-[-0.04em] font-extrabold">Planilla Inteligente.</div>
+      <p class="text-[13px] text-muted mt-2">Por Helena Rodríguez · En 14 países hispanos desde 2019.</p>
+    </div>
+    <div class="text-[13px]">
+      <div class="t-kick text-muted mb-3">Legal</div>
+      <ul class="space-y-1.5 text-ink2">
+        <li><a href="#" class="hover:text-ink">Términos</a></li>
+        <li><a href="#" class="hover:text-ink">Privacidad</a></li>
+        <li><a href="#" class="hover:text-ink">Reembolso</a></li>
+      </ul>
+    </div>
+    <div class="text-[13px]">
+      <div class="t-kick text-muted mb-3">Contacto</div>
+      <ul class="space-y-1.5 text-ink2">
+        <li>hola@planillainteligente.com</li>
+        <li class="text-muted">Respuesta en &lt; 24h</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-line">
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-5 flex flex-col sm:flex-row justify-between gap-2 text-[12px] text-muted">
+      <span>© 2026 Planilla Inteligente. Todos los derechos reservados.</span>
+      <span>Los resultados dependen del uso constante.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- =========================================================
+  PURCHASE NOTIFICATION TOAST
+========================================================= -->
+<div id="purchaseToast" class="purchase-toast" role="status" aria-live="polite">
+  <div class="w-10 h-10 rounded-full bg-green/15 grid place-items-center shrink-0">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+  <div class="min-w-0 flex-1">
+    <div class="text-[13px] text-ink leading-tight">
+      <strong id="toastName" class="font-bold">Carolina M.</strong>
+      <span class="text-muted" id="toastCity"> de Bogotá</span>
+    </div>
+    <div class="text-[11px] text-muted mt-1 leading-tight">
+      Acaba de adquirir <strong class="text-green">Planilla Inteligente</strong> · <span id="toastTime">hace 2 min</span>
+    </div>
+  </div>
+  <button type="button" aria-label="Cerrar" onclick="document.getElementById('purchaseToast').classList.remove('show')" class="w-6 h-6 rounded-full hover:bg-surface grid place-items-center text-muted shrink-0">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+</div>
+
+<!-- =========================================================
+  STICKY MOBILE CTA
+========================================================= -->
+<div class="md:hidden fixed inset-x-3 z-50" style="bottom: max(env(safe-area-inset-bottom), 12px);">
+  <a href="#precio" class="flex items-center justify-between bg-ink text-white px-5 py-3.5 rounded-xl tap-52 shadow-lg">
+    <div>
+      <div class="text-[10px] uppercase tracking-wider text-green font-bold leading-tight">Cierra en <span id="timerSticky">—</span></div>
+      <div class="display font-extrabold text-[15px]">Quiero por US$ 19,90 →</div>
+    </div>
+    <div class="display font-black text-xl text-green">$19,90</div>
+  </a>
+</div>
+
+<script>
+  // Purchase notifications — social proof live feed
+  (function(){
+    const toast = document.getElementById('purchaseToast');
+    if(!toast) return;
+
+    const nameEl = document.getElementById('toastName');
+    const cityEl = document.getElementById('toastCity');
+    const timeEl = document.getElementById('toastTime');
+
+    const purchases = [
+      { name: 'Carolina M.',  city: 'Bogotá, Colombia'     },
+      { name: 'Rafael A.',    city: 'CDMX, México'         },
+      { name: 'Julia P.',     city: 'Lima, Perú'           },
+      { name: 'Marcos V.',    city: 'Madrid, España'       },
+      { name: 'Lucía S.',     city: 'Buenos Aires, AR'     },
+      { name: 'Juan V.',      city: 'Guayaquil, Ecuador'   },
+      { name: 'Beatriz T.',   city: 'Santiago, Chile'      },
+      { name: 'Andrea G.',    city: 'Monterrey, México'    },
+      { name: 'Natalia R.',   city: 'Medellín, Colombia'   },
+      { name: 'Diego F.',     city: 'Córdoba, Argentina'   },
+      { name: 'Camila L.',    city: 'Quito, Ecuador'       },
+      { name: 'Martina P.',   city: 'Rosario, Argentina'   },
+      { name: 'Paula H.',     city: 'Cali, Colombia'       },
+      { name: 'Sebastián R.', city: 'Valparaíso, Chile'    },
+      { name: 'Valentina A.', city: 'Guadalajara, México'  },
+      { name: 'Gabriela C.',  city: 'Barcelona, España'    },
+      { name: 'Mauricio D.',  city: 'San José, Costa Rica' },
+      { name: 'Florencia T.', city: 'Montevideo, Uruguay'  }
+    ];
+
+    const timeOptions = [
+      'hace 1 min', 'hace 2 min', 'hace 3 min', 'hace 4 min',
+      'hace 6 min', 'hace 8 min', 'hace 10 min', 'hace 12 min',
+      'hace 15 min', 'hace 20 min'
+    ];
+
+    function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function showNext(){
+      const p = pickRandom(purchases);
+      const t = pickRandom(timeOptions);
+      nameEl.textContent = p.name;
+      cityEl.textContent = ' de ' + p.city;
+      timeEl.textContent = t;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 5500);
+    }
+
+    // First notification after 8 seconds
+    setTimeout(() => {
+      showNext();
+      // Then every 18-25 seconds (random to feel natural)
+      function scheduleNext(){
+        const delay = 18000 + Math.random() * 7000;
+        setTimeout(() => { showNext(); scheduleNext(); }, delay);
+      }
+      scheduleNext();
+    }, 8000);
+  })();
+
+  // Dynamic date in Spanish — updates automatically every day
+  (function(){
+    const els = document.querySelectorAll('.js-today-date');
+    if(!els.length) return;
+    const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const now = new Date();
+    const day = now.getDate();
+    const month = months[now.getMonth()];
+    const text = day + ' de ' + month;
+    els.forEach(el => el.textContent = text);
+  })();
+
+  // Timer
+  (function(){
+    const targets = ['timer','timerSticky','topTimer'].map(id => document.getElementById(id)).filter(Boolean);
+    if(!targets.length) return;
+    function tick(){
+      const now = new Date();
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      let diff = Math.max(0, Math.floor((end - now)/1000));
+      const h = String(Math.floor(diff/3600)).padStart(2,'0'); diff %= 3600;
+      const m = String(Math.floor(diff/60)).padStart(2,'0');
+      const s = String(diff%60).padStart(2,'0');
+      targets.forEach(el => {
+        if(el.id === 'timer') el.textContent = h+'h '+m+'m '+s+'s';
+        else el.textContent = h+':'+m+':'+s;
+      });
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+
+  // Cupos tied to hour
+  (function(){
+    const els = ['vagasTop','vagasOf'].map(id => document.getElementById(id)).filter(Boolean);
+    const elB = document.getElementById('vagas-bar');
+    const now = new Date();
+    const frac = (now.getHours() * 60 + now.getMinutes()) / (24 * 60);
+    const vagas = Math.min(295, Math.floor(150 + frac * 120));
+    els.forEach(el => el.textContent = vagas);
+    if(elB) elB.style.width = Math.round((vagas/300)*100) + '%';
+  })();
+
+  // Sticky mobile CTA — oculto por defecto, aparece tras la 4ª sección, se oculta al llegar al precio
+  (function(){
+    const sticky = document.querySelector('.md\\:hidden.fixed.inset-x-3');
+    const reveal = document.getElementById('reveal');
+    const price  = document.getElementById('precio');
+    if(!sticky || !reveal || !price || !('IntersectionObserver' in window)) return;
+
+    sticky.style.transition = 'opacity .3s ease, transform .3s ease';
+    const hide = () => {
+      sticky.style.opacity = '0';
+      sticky.style.transform = 'translateY(120%)';
+      sticky.style.pointerEvents = 'none';
+    };
+    const show = () => {
+      sticky.style.opacity = '1';
+      sticky.style.transform = 'translateY(0)';
+      sticky.style.pointerEvents = 'auto';
+    };
+    hide();
+
+    let pastMethod = false;
+    let atPrice = false;
+    const update = () => (pastMethod && !atPrice) ? show() : hide();
+
+    new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        pastMethod = e.isIntersecting || e.boundingClientRect.top < 0;
+        update();
+      });
+    }, { threshold: 0 }).observe(reveal);
+
+    new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        atPrice = e.isIntersecting;
+        update();
+      });
+    }, { rootMargin: '0px 0px -30% 0px' }).observe(price);
+  })();
+</script>
+
+</body>
+</html>
