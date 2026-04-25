@@ -20,9 +20,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (ev) => {
     const el = (ev.target as HTMLElement)?.closest?.("[data-cta]") as HTMLElement | null;
     if (!el) return;
+
+    const ctaText = el.innerText?.trim().slice(0, 80);
     trackEvent("cta_click", {
       cta_id: el.dataset.cta,
-      cta_text: el.innerText?.trim().slice(0, 80),
+      cta_text: ctaText,
     });
+
+    // Si el CTA va al checkout Kiwify, disparamos initiate_checkout para Meta CAPI.
+    // El click no se bloquea: el navegador sigue al href en paralelo (el evento queda
+    // en el dataLayer; el GTM lo recoge en cuanto carga, aunque el usuario ya navegó).
+    const href = (el as HTMLAnchorElement).href || "";
+    if (/pay\.kiwify\.com/i.test(href)) {
+      trackEvent("initiate_checkout", {
+        value: 19.9,
+        currency: "USD",
+        cta_id: el.dataset.cta,
+      });
+    }
   });
 });
