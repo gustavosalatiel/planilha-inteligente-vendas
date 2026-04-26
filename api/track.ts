@@ -117,50 +117,48 @@ export default async function handler(req: Request): Promise<Response> {
     return new Response("", { status: 204 });
   }
 
-  // Cookies (fallback do header se body não passou)
+  // Captura SÍNCRONA mínima (~1ms): cookies + headers de geo + IP.
+  // Os hashes SHA-256 e o fetch pra Meta vão pro background.
   const fbp = body.fbp || readCookie(req, "_fbp");
   const fbc = body.fbc || readCookie(req, "_fbc");
-
-  // Geo enrichment via Vercel headers (já presentes em todo request edge)
   const country = req.headers.get("x-vercel-ip-country") || "";
   const region = req.headers.get("x-vercel-ip-country-region") || "";
   const city = req.headers.get("x-vercel-ip-city") || "";
   const zip = req.headers.get("x-vercel-ip-postal-code") || "";
-
-  const [ctHash, stHash, zpHash, countryHash] = await Promise.all([
-    city ? sha256Hex(city.replace(/\s+/g, "")) : "",
-    region ? sha256Hex(region) : "",
-    zip ? sha256Hex(zip.replace(/\D/g, "")) : "",
-    country ? sha256Hex(country) : "",
-  ]);
-
-  const externalId = body.external_id ? await sha256Hex(body.external_id) : "";
-
   const ip = clientIp(req);
   const referer = req.headers.get("referer") || "";
   const url = body.url || referer || "";
+  const externalIdRaw = body.external_id || "";
 
-  // Fire-and-forget: responde 204 ao browser IMEDIATAMENTE (~50ms),
-  // dispatch pro Meta Graph roda em background via waitUntil.
-  // Isso libera o sendBeacon do cliente sem esperar a Meta responder.
-  const dispatch = sendCAPI({
-    event_name: eventName as Body["event_name"] extends infer T ? T : never,
-    event_id: eventId,
-    event_time: Math.floor(Date.now() / 1000),
-    action_source: "website",
-    event_source_url: url,
-    user_data: {
-      client_ip_address: ip || undefined,
-      client_user_agent: ua,
-      fbp: fbp || undefined,
-      fbc: fbc || undefined,
-      external_id: externalId || undefined,
-      country: countryHash || undefined,
-      st: stHash || undefined,
-      ct: ctHash || undefined,
-      zp: zpHash || undefined,
-    },
-  } as never).catch((err) => {
+  // Background task: hashes + dispatch CAPI. Handler retorna 204 em ~5ms.
+  const dispatch = (async () => {
+    const [ctHash, stHash, zpHash, countryHash, externalIdHash] = await Promise.all([
+      city ? sha256Hex(city.replace(/\s+/g, "")) : "",
+      region ? sha256Hex(region) : "",
+      zip ? sha256Hex(zip.replace(/\D/g, "")) : "",
+      country ? sha256Hex(country) : "",
+      externalIdRaw ? sha256Hex(externalIdRaw) : "",
+    ]);
+
+    await sendCAPI({
+      event_name: eventName as Body["event_name"] extends infer T ? T : never,
+      event_id: eventId,
+      event_time: Math.floor(Date.now() / 1000),
+      action_source: "website",
+      event_source_url: url,
+      user_data: {
+        client_ip_address: ip || undefined,
+        client_user_agent: ua,
+        fbp: fbp || undefined,
+        fbc: fbc || undefined,
+        external_id: externalIdHash || undefined,
+        country: countryHash || undefined,
+        st: stHash || undefined,
+        ct: ctHash || undefined,
+        zp: zpHash || undefined,
+      },
+    } as never);
+  })().catch((err) => {
     console.error("CAPI error:", err);
   });
 

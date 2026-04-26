@@ -4,15 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-<!-- Consent Mode v2 — defaults GDPR-first (aplica a TODAS las regiones) -->
-<script>
-window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'denied',personalization_storage:'denied',security_storage:'granted',wait_for_update:500});
-gtag('set','ads_data_redaction',true);
-gtag('set','url_passthrough',true);
-</script>
-
-<!-- PageView server-side IMEDIATO (antes do CSS, antes do GTM, antes do Cookiebot).
+<!-- PageView server-side IMEDIATO — primeiro script do <head> pra disparar
+     o quanto antes possível, antes do Consent Mode, do Cookiebot, do CSS.
      Dispara CAPI direto via /api/track com sendBeacon (fire-and-forget).
      Bypassa adblockers (same-origin), funciona em iOS ATT, recupera ~15-25% do connect rate.
      Inclui: _fbp/_fbc cookies, fbclid capture, external_id persistente em localStorage. -->
@@ -73,6 +66,16 @@ gtag('set','url_passthrough',true);
     }
   } catch(e) { /* noop */ }
 })();
+</script>
+
+<!-- Consent Mode v2 — defaults GDPR-first (aplica a TODAS las regiones).
+     Roda DEPOIS do PageView server-side pq o CAPI server-side independe do Consent Mode
+     (que governa cookies/storage do Google, não dispatch server-to-server). -->
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'denied',personalization_storage:'denied',security_storage:'granted',wait_for_update:500});
+gtag('set','ads_data_redaction',true);
+gtag('set','url_passthrough',true);
 </script>
 
 <!-- Cookiebot CMP — interaction-gated igual ao GTM.
