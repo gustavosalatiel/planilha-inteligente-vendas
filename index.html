@@ -137,11 +137,6 @@ gtag('set','url_passthrough',true);
 <!-- CSS pré-compilado (inclui fontes self-hosted e Tailwind) -->
 <link rel="stylesheet" href="./css/styles.css" />
 
-<!-- Vercel Speed Insights (RUM): mede LCP/FCP/CLS/INP de usuários reais.
-     Defer = não bloqueia render. Beacon enviado no unload. -->
-<script>window.si=window.si||function(){(window.siq=window.siq||[]).push(arguments)};</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-
 </head>
 
 <body>
@@ -1915,6 +1910,11 @@ gtag('set','url_passthrough',true);
 
 <!-- Tracking bundle — lazy load vía esbuild IIFE, no bloquea render -->
 <script src="/js/tracking.js" defer></script>
+
+<!-- Vercel Speed Insights (RUM) — final do body pra não competir com critical path.
+     Beacon real é enviado no unload, não no load, então rodar tarde não atrapalha medição. -->
+<script>window.si=window.si||function(){(window.siq=window.siq||[]).push(arguments)};</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 
 </body>
 </html>
