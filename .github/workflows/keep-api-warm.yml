@@ -1,0 +1,28 @@
+name: Keep /api/track warm
+
+# Mantém a Edge Function quente fazendo um GET de warmup a cada 5 minutos.
+# Repo público → minutos do GitHub Actions são ilimitados.
+# Latência média do sendBeacon cai de ~500ms (cold) para ~80ms (warm),
+# evitando perda de eventos PageView por timeout em redes lentas.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # a cada 5 min UTC
+  workflow_dispatch:        # permite executar manualmente em Actions UI
+
+concurrency:
+  group: keep-api-warm
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Hit /api/track?warmup=1
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 10 \
+            -H "User-Agent: gh-actions-keepalive/1.0" \
+            "https://www.helenarodriguez.site/api/track?warmup=1"
+          echo

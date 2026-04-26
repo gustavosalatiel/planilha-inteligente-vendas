@@ -37,6 +37,24 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204 });
   }
+
+  // Warm-up: GET com ?warmup=1 mantém a Edge Function quente sem disparar CAPI.
+  // Chamado por cron externo (GitHub Actions) a cada 5min.
+  // Resposta cacheável de 1s pra que múltiplos warmups concorrentes não acumulem.
+  if (req.method === "GET") {
+    const url = new URL(req.url);
+    if (url.searchParams.get("warmup") === "1") {
+      return new Response("ok", {
+        status: 200,
+        headers: {
+          "Content-Type": "text/plain",
+          "Cache-Control": "public, max-age=1",
+        },
+      });
+    }
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
