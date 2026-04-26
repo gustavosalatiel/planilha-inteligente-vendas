@@ -17,7 +17,7 @@ type UserData = {
 };
 
 type CapiEvent = {
-  event_name: "Purchase" | "Lead" | "InitiateCheckout" | "ViewContent";
+  event_name: "Purchase" | "Lead" | "InitiateCheckout" | "ViewContent" | "PageView";
   event_id: string;
   event_time: number;
   action_source: "website" | "system_generated";

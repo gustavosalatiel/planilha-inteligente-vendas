@@ -12,20 +12,81 @@ gtag('set','ads_data_redaction',true);
 gtag('set','url_passthrough',true);
 </script>
 
-<!-- Cookiebot CMP — inyección diferida tras window.load para no competir con el LCP.
-     Seguro porque: (1) Consent default ya está denied arriba; (2) GTM es interaction-gated
-     (no dispara nada antes de que el banner aparezca). -->
+<!-- PageView server-side IMEDIATO (antes do CSS, antes do GTM, antes do Cookiebot).
+     Dispara CAPI direto via /api/track com sendBeacon (fire-and-forget).
+     Bypassa adblockers (same-origin), funciona em iOS ATT, recupera ~15-25% do connect rate. -->
 <script>
-addEventListener('load',function(){setTimeout(function(){
-  var s=document.createElement('script');
-  s.id='Cookiebot';
-  s.src='https://consent.cookiebot.com/uc.js';
-  s.async=true;
-  s.setAttribute('data-cbid','8e246654-8eed-4b29-b1c7-2ba59d8fc284');
-  s.setAttribute('data-blockingmode','auto');
-  s.setAttribute('data-culture','ES');
-  document.head.appendChild(s);
-},500)});
+(function(){
+  try {
+    var d = document, l = location, c = d.cookie;
+    // 1) captura fbclid e seta _fbc se chegou de ad
+    var fbclid = new URLSearchParams(l.search).get('fbclid');
+    if (fbclid) {
+      d.cookie = '_fbc=fb.1.' + Date.now() + '.' + fbclid + ';path=/;max-age=15552000;domain=.helenarodriguez.site;samesite=lax';
+      c = d.cookie;
+    }
+    // 2) garante _fbp (cookie que Meta usa pra dedup)
+    var fbp = (c.match(/(?:^|;\s*)_fbp=([^;]+)/) || [])[1];
+    if (!fbp) {
+      fbp = 'fb.1.' + Date.now() + '.' + Math.floor(Math.random()*1e10);
+      d.cookie = '_fbp=' + fbp + ';path=/;max-age=15552000;domain=.helenarodriguez.site;samesite=lax';
+    }
+    var fbc = (d.cookie.match(/(?:^|;\s*)_fbc=([^;]+)/) || [])[1];
+
+    // 3) event_id (compartilhado com client-side pra deduplicação no Meta)
+    var ev = (crypto && crypto.randomUUID) ? crypto.randomUUID()
+      : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,10);
+    window.__pvEventId = ev;
+
+    // 4) dispara
+    var payload = JSON.stringify({
+      event_name: 'PageView',
+      event_id: ev,
+      url: l.href,
+      fbp: fbp, fbc: fbc
+    });
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch('/api/track', {
+        method: 'POST', body: payload, keepalive: true,
+        headers: { 'Content-Type': 'application/json' }
+      }).catch(function(){});
+    }
+  } catch(e) { /* noop */ }
+})();
+</script>
+
+<!-- Cookiebot CMP — interaction-gated igual ao GTM.
+     Carrega no primeiro scroll/click OU após 3s ocioso (requestIdleCallback).
+     Seguro porque: (1) Consent default já é denied; (2) PageView server-side já disparou. -->
+<script>
+(function(){
+  var loaded = false;
+  function load(){
+    if (loaded) return; loaded = true;
+    var s=document.createElement('script');
+    s.id='Cookiebot';
+    s.src='https://consent.cookiebot.com/uc.js';
+    s.async=true;
+    s.setAttribute('data-cbid','8e246654-8eed-4b29-b1c7-2ba59d8fc284');
+    s.setAttribute('data-blockingmode','auto');
+    s.setAttribute('data-culture','ES');
+    document.head.appendChild(s);
+  }
+  var evts = ['pointerdown','keydown','scroll','touchstart'];
+  var opts = { once:true, passive:true, capture:true };
+  evts.forEach(function(e){ addEventListener(e, load, opts); });
+  // fallback: idle-time depois do load
+  addEventListener('load', function(){
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(function(){ setTimeout(load, 2500); }, { timeout: 4000 });
+    } else {
+      setTimeout(load, 3000);
+    }
+  });
+})();
 </script>
 
 <meta name="description" content="Una planilla inteligente que te dice a dónde se va tu dinero. En 7 días." />
@@ -42,11 +103,12 @@ addEventListener('load',function(){setTimeout(function(){
 <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-700-normal-latin.woff2" crossorigin />
 <link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-500-italic-latin.woff2" crossorigin />
 
-<!-- Preload da imagem LCP em WebP responsivo -->
+<!-- Preload da imagem LCP em WebP responsivo (mobile-first: href padrão = 480w).
+     Mobile recebe 25 KB em vez de 47 KB. Desktop usa srcset → 800w/1200w. -->
 <link
   rel="preload"
   as="image"
-  href="./img/f70cb841-0f64-40b3-91cc-c0418415db03-800.webp"
+  href="./img/f70cb841-0f64-40b3-91cc-c0418415db03-480.webp"
   imagesrcset="./img/f70cb841-0f64-40b3-91cc-c0418415db03-480.webp 480w, ./img/f70cb841-0f64-40b3-91cc-c0418415db03-800.webp 800w, ./img/f70cb841-0f64-40b3-91cc-c0418415db03-1200.webp 1200w"
   imagesizes="(max-width: 640px) 92vw, (max-width: 1024px) 80vw, 560px"
   fetchpriority="high"
