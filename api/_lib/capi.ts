@@ -14,6 +14,11 @@ type UserData = {
   fbc?: string;
   client_ip_address?: string;
   client_user_agent?: string;
+  // Geo (todos hasheados SHA-256 quando enviados)
+  country?: string;
+  st?: string;
+  ct?: string;
+  zp?: string;
 };
 
 type CapiEvent = {

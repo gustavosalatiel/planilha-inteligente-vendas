@@ -14,17 +14,20 @@ gtag('set','url_passthrough',true);
 
 <!-- PageView server-side IMEDIATO (antes do CSS, antes do GTM, antes do Cookiebot).
      Dispara CAPI direto via /api/track com sendBeacon (fire-and-forget).
-     Bypassa adblockers (same-origin), funciona em iOS ATT, recupera ~15-25% do connect rate. -->
+     Bypassa adblockers (same-origin), funciona em iOS ATT, recupera ~15-25% do connect rate.
+     Inclui: _fbp/_fbc cookies, fbclid capture, external_id persistente em localStorage. -->
 <script>
 (function(){
   try {
-    var d = document, l = location, c = d.cookie;
+    var d = document, l = location, c = d.cookie, ls = window.localStorage;
+
     // 1) captura fbclid e seta _fbc se chegou de ad
     var fbclid = new URLSearchParams(l.search).get('fbclid');
     if (fbclid) {
       d.cookie = '_fbc=fb.1.' + Date.now() + '.' + fbclid + ';path=/;max-age=15552000;domain=.helenarodriguez.site;samesite=lax';
       c = d.cookie;
     }
+
     // 2) garante _fbp (cookie que Meta usa pra dedup)
     var fbp = (c.match(/(?:^|;\s*)_fbp=([^;]+)/) || [])[1];
     if (!fbp) {
@@ -33,17 +36,31 @@ gtag('set','url_passthrough',true);
     }
     var fbc = (d.cookie.match(/(?:^|;\s*)_fbc=([^;]+)/) || [])[1];
 
-    // 3) event_id (compartilhado com client-side pra deduplicação no Meta)
+    // 3) external_id persistente (cross-device matching, EMQ +1)
+    var eid = '';
+    try {
+      eid = ls.getItem('eid') || '';
+      if (!eid) {
+        eid = (crypto && crypto.randomUUID) ? crypto.randomUUID()
+          : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,12);
+        ls.setItem('eid', eid);
+      }
+    } catch(_) {}
+    window.__externalId = eid;
+
+    // 4) event_id (compartilhado com client-side pra deduplicação no Meta)
     var ev = (crypto && crypto.randomUUID) ? crypto.randomUUID()
       : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,10);
     window.__pvEventId = ev;
 
-    // 4) dispara
+    // 5) dispara
     var payload = JSON.stringify({
       event_name: 'PageView',
       event_id: ev,
       url: l.href,
-      fbp: fbp, fbc: fbc
+      fbp: fbp,
+      fbc: fbc,
+      external_id: eid || undefined
     });
 
     if (navigator.sendBeacon) {

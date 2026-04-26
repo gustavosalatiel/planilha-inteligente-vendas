@@ -1,13 +1,13 @@
-// Endpoint público de tracking server-side.
-// Chamado via navigator.sendBeacon() do <head> do HTML para disparar PageView/ViewContent
-// no Meta CAPI ANTES de qualquer JS pesado carregar (GTM, Cookiebot, fbevents.js).
+// Endpoint público de tracking server-side (Edge runtime).
+// Chamado via navigator.sendBeacon() do <head> para disparar PageView/ViewContent
+// no Meta CAPI antes de qualquer JS pesado carregar (GTM, Cookiebot, fbevents.js).
 //
-// Vantagens:
-// - Bypassa adblockers (mesmo domínio)
-// - Funciona em iOS ATT (server-to-server, ATT não bloqueia)
-// - Recupera ~10-25% do connect rate perdido
-//
-// Runtime Edge: latência ~30-80ms global, sem cold start.
+// Recursos:
+// - Anti-bot: valida Origin/Referer same-origin
+// - Geo enrichment: usa headers Vercel (country/region/city/zip) → hash SHA-256
+// - Cookies _fbp/_fbc da requisição (fallback se inline script não setou)
+// - external_id persistente do visitor (vem do localStorage no client)
+// - Warmup endpoint via GET ?warmup=1
 
 import { sendCAPI } from "./_lib/capi.js";
 
@@ -23,6 +23,10 @@ type Body = {
 };
 
 const ALLOWED_EVENTS = new Set(["PageView", "ViewContent", "Lead"] as const);
+const ALLOWED_HOSTS = new Set([
+  "https://www.helenarodriguez.site",
+  "https://helenarodriguez.site",
+]);
 
 function clientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for") || "";
@@ -31,25 +35,51 @@ function clientIp(req: Request): string {
   return req.headers.get("x-real-ip") || "";
 }
 
+async function sha256Hex(input: string): Promise<string> {
+  const clean = String(input || "").trim().toLowerCase();
+  if (!clean) return "";
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(clean));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Lê cookie do request header (fallback se body não passou _fbp/_fbc)
+function readCookie(req: Request, name: string): string {
+  const cookieHeader = req.headers.get("cookie") || "";
+  const m = cookieHeader.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
+  return m ? m[1] : "";
+}
+
+// Valida que a requisição veio do nosso domínio (anti-bot básico)
+function originValid(req: Request): boolean {
+  const origin = req.headers.get("origin") || "";
+  const referer = req.headers.get("referer") || "";
+
+  if (origin) return ALLOWED_HOSTS.has(origin);
+  if (referer) {
+    try {
+      const o = new URL(referer).origin;
+      return ALLOWED_HOSTS.has(o);
+    } catch {
+      return false;
+    }
+  }
+  // Sem Origin nem Referer (privacy extension agressiva): permite passar.
+  // sendBeacon sempre manda Origin, então quem chega aqui sem header é raro.
+  return true;
+}
+
 export default async function handler(req: Request): Promise<Response> {
-  // CORS / headers — same-origin então CORS não é necessário,
-  // mas mantém OPTIONS resposta rápida.
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204 });
   }
 
-  // Warm-up: GET com ?warmup=1 mantém a Edge Function quente sem disparar CAPI.
-  // Chamado por cron externo (GitHub Actions) a cada 5min.
-  // Resposta cacheável de 1s pra que múltiplos warmups concorrentes não acumulem.
+  // Warmup do cron: GET ?warmup=1
   if (req.method === "GET") {
     const url = new URL(req.url);
     if (url.searchParams.get("warmup") === "1") {
       return new Response("ok", {
         status: 200,
-        headers: {
-          "Content-Type": "text/plain",
-          "Cache-Control": "public, max-age=1",
-        },
+        headers: { "Content-Type": "text/plain", "Cache-Control": "public, max-age=1" },
       });
     }
     return new Response("Method Not Allowed", { status: 405 });
@@ -57,6 +87,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
+  }
+
+  // Anti-bot: valida origem
+  if (!originValid(req)) {
+    return new Response("Forbidden", { status: 403 });
   }
 
   let body: Body;
@@ -77,14 +112,32 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const ua = req.headers.get("user-agent") || "";
-  const ip = clientIp(req);
-  const referer = req.headers.get("referer") || "";
-  const url = body.url || referer || "";
-
-  // Validações leves contra spam óbvio
   if (!ua || ua.length < 10) {
     return new Response("", { status: 204 });
   }
+
+  // Cookies (fallback do header se body não passou)
+  const fbp = body.fbp || readCookie(req, "_fbp");
+  const fbc = body.fbc || readCookie(req, "_fbc");
+
+  // Geo enrichment via Vercel headers (já presentes em todo request edge)
+  const country = req.headers.get("x-vercel-ip-country") || "";
+  const region = req.headers.get("x-vercel-ip-country-region") || "";
+  const city = req.headers.get("x-vercel-ip-city") || "";
+  const zip = req.headers.get("x-vercel-ip-postal-code") || "";
+
+  const [ctHash, stHash, zpHash, countryHash] = await Promise.all([
+    city ? sha256Hex(city.replace(/\s+/g, "")) : "",
+    region ? sha256Hex(region) : "",
+    zip ? sha256Hex(zip.replace(/\D/g, "")) : "",
+    country ? sha256Hex(country) : "",
+  ]);
+
+  const externalId = body.external_id ? await sha256Hex(body.external_id) : "";
+
+  const ip = clientIp(req);
+  const referer = req.headers.get("referer") || "";
+  const url = body.url || referer || "";
 
   try {
     await sendCAPI({
@@ -96,14 +149,16 @@ export default async function handler(req: Request): Promise<Response> {
       user_data: {
         client_ip_address: ip || undefined,
         client_user_agent: ua,
-        fbp: body.fbp || undefined,
-        fbc: body.fbc || undefined,
-        external_id: body.external_id || undefined,
+        fbp: fbp || undefined,
+        fbc: fbc || undefined,
+        external_id: externalId || undefined,
+        country: countryHash || undefined,
+        st: stHash || undefined,
+        ct: ctHash || undefined,
+        zp: zpHash || undefined,
       },
     } as never);
   } catch (err) {
-    // Falha silenciosa para não impactar UX.
-    // Em produção, logar para Sentry/Logtail.
     console.error("CAPI error:", err);
     return new Response("", { status: 202 });
   }
