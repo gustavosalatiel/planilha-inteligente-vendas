@@ -10,6 +10,7 @@
 // - Warmup endpoint via GET ?warmup=1
 
 import { sendCAPI } from "./_lib/capi.js";
+import { waitUntil } from "@vercel/functions";
 
 export const config = { runtime: "edge" };
 
@@ -139,29 +140,31 @@ export default async function handler(req: Request): Promise<Response> {
   const referer = req.headers.get("referer") || "";
   const url = body.url || referer || "";
 
-  try {
-    await sendCAPI({
-      event_name: eventName as Body["event_name"] extends infer T ? T : never,
-      event_id: eventId,
-      event_time: Math.floor(Date.now() / 1000),
-      action_source: "website",
-      event_source_url: url,
-      user_data: {
-        client_ip_address: ip || undefined,
-        client_user_agent: ua,
-        fbp: fbp || undefined,
-        fbc: fbc || undefined,
-        external_id: externalId || undefined,
-        country: countryHash || undefined,
-        st: stHash || undefined,
-        ct: ctHash || undefined,
-        zp: zpHash || undefined,
-      },
-    } as never);
-  } catch (err) {
+  // Fire-and-forget: responde 204 ao browser IMEDIATAMENTE (~50ms),
+  // dispatch pro Meta Graph roda em background via waitUntil.
+  // Isso libera o sendBeacon do cliente sem esperar a Meta responder.
+  const dispatch = sendCAPI({
+    event_name: eventName as Body["event_name"] extends infer T ? T : never,
+    event_id: eventId,
+    event_time: Math.floor(Date.now() / 1000),
+    action_source: "website",
+    event_source_url: url,
+    user_data: {
+      client_ip_address: ip || undefined,
+      client_user_agent: ua,
+      fbp: fbp || undefined,
+      fbc: fbc || undefined,
+      external_id: externalId || undefined,
+      country: countryHash || undefined,
+      st: stHash || undefined,
+      ct: ctHash || undefined,
+      zp: zpHash || undefined,
+    },
+  } as never).catch((err) => {
     console.error("CAPI error:", err);
-    return new Response("", { status: 202 });
-  }
+  });
+
+  waitUntil(dispatch);
 
   return new Response("", { status: 204 });
 }
