@@ -4,8 +4,21 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-<!-- PageView server-side IMEDIATO — primeiro script do <head> pra disparar
-     o quanto antes possível, antes do Consent Mode, do Cookiebot, do CSS.
+<!-- Preconnect a UTMify: handshake TLS adiantado, o pixel.js abaixo aterrissa numa conexão já aberta.
+     Crítico pra connect rate em mobile: usuário do Instagram/FB in-app browser bounce em <2s. -->
+<link rel="preconnect" href="https://cdn.utmify.com.br" crossorigin />
+
+<!-- UTMify pixel — carregado EARLY no <head> com async, antes de qualquer script pesado.
+     Antes ficava no final do <body> via document.createElement, o que fazia o pixel só
+     começar a baixar depois de parsear ~1900 linhas de HTML — usuários mobile do Instagram
+     bouncavam antes do pixel disparar (connect rate ~48%).
+     Agora o preload scanner do browser pega o src imediatamente.
+     Atribução pura: Facebook Pixel e CAPI estão OFF no painel UTMify (opção A). -->
+<script>window.pixelId = "69eb02f35a495b63bf076849";</script>
+<script async src="https://cdn.utmify.com.br/scripts/pixel/pixel.js"></script>
+
+<!-- PageView server-side IMEDIATO — disparado o quanto antes possível,
+     antes do Consent Mode, do Cookiebot, do CSS.
      Dispara CAPI direto via /api/track com sendBeacon (fire-and-forget).
      Bypassa adblockers (same-origin), funciona em iOS ATT, recupera ~15-25% do connect rate.
      Inclui: _fbp/_fbc cookies, fbclid capture, external_id persistente em localStorage. -->
@@ -1895,18 +1908,8 @@ gtag('set','url_passthrough',true);
   })();
 </script>
 
-<!-- UTMify pixel — solo atribución/dashboard. Persiste UTMs en localStorage.utmify_data.
-     CRÍTICO: en el panel de UTMify, Facebook Pixel y CAPI están DESACTIVADOS (opción A)
-     porque nuestra pipeline Stape es la única dueña de la dedup Browser↔Server.
-     Si se reactivan, Meta recibirá Purchase duplicado y la dedup quebra. -->
-<script>
-  window.pixelId = "69eb02f35a495b63bf076849";
-  var a = document.createElement("script");
-  a.setAttribute("async", "");
-  a.setAttribute("defer", "");
-  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
-  document.head.appendChild(a);
-</script>
+<!-- UTMify pixel: movido para o <head> early-loaded.
+     Bottom-of-body via createElement deixava connect rate ~48% em mobile. -->
 
 <!-- Tracking bundle — lazy load vía esbuild IIFE, no bloquea render -->
 <script src="/js/tracking.js" defer></script>
