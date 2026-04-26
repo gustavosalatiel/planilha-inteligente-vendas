@@ -132,35 +132,60 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Background task: hashes + dispatch CAPI. Handler retorna 204 em ~5ms.
   const dispatch = (async () => {
-    const [ctHash, stHash, zpHash, countryHash, externalIdHash] = await Promise.all([
-      city ? sha256Hex(city.replace(/\s+/g, "")) : "",
-      region ? sha256Hex(region) : "",
-      zip ? sha256Hex(zip.replace(/\D/g, "")) : "",
-      country ? sha256Hex(country) : "",
-      externalIdRaw ? sha256Hex(externalIdRaw) : "",
-    ]);
+    const t0 = Date.now();
+    try {
+      const [ctHash, stHash, zpHash, countryHash, externalIdHash] = await Promise.all([
+        city ? sha256Hex(city.replace(/\s+/g, "")) : "",
+        region ? sha256Hex(region) : "",
+        zip ? sha256Hex(zip.replace(/\D/g, "")) : "",
+        country ? sha256Hex(country) : "",
+        externalIdRaw ? sha256Hex(externalIdRaw) : "",
+      ]);
 
-    await sendCAPI({
-      event_name: eventName as Body["event_name"] extends infer T ? T : never,
-      event_id: eventId,
-      event_time: Math.floor(Date.now() / 1000),
-      action_source: "website",
-      event_source_url: url,
-      user_data: {
-        client_ip_address: ip || undefined,
-        client_user_agent: ua,
-        fbp: fbp || undefined,
-        fbc: fbc || undefined,
-        external_id: externalIdHash || undefined,
-        country: countryHash || undefined,
-        st: stHash || undefined,
-        ct: ctHash || undefined,
-        zp: zpHash || undefined,
-      },
-    } as never);
-  })().catch((err) => {
-    console.error("CAPI error:", err);
-  });
+      await sendCAPI({
+        event_name: eventName as Body["event_name"] extends infer T ? T : never,
+        event_id: eventId,
+        event_time: Math.floor(Date.now() / 1000),
+        action_source: "website",
+        event_source_url: url,
+        user_data: {
+          client_ip_address: ip || undefined,
+          client_user_agent: ua,
+          fbp: fbp || undefined,
+          fbc: fbc || undefined,
+          external_id: externalIdHash || undefined,
+          country: countryHash || undefined,
+          st: stHash || undefined,
+          ct: ctHash || undefined,
+          zp: zpHash || undefined,
+        },
+      } as never);
+
+      const elapsed = Date.now() - t0;
+      // Log estruturado: aparece no painel Vercel → Logs em tempo real
+      console.log(
+        JSON.stringify({
+          ok: true,
+          event_name: eventName,
+          event_id: eventId,
+          ms: elapsed,
+          country,
+          has_fbp: !!fbp,
+          has_fbc: !!fbc,
+          has_eid: !!externalIdRaw,
+        }),
+      );
+    } catch (err) {
+      console.error(
+        JSON.stringify({
+          ok: false,
+          event_name: eventName,
+          event_id: eventId,
+          error: err instanceof Error ? err.message : String(err),
+        }),
+      );
+    }
+  })();
 
   waitUntil(dispatch);
 
